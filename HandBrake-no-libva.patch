@@ -1,0 +1,13 @@
+diff -up HandBrake-1.0.2/test/module.defs.va HandBrake-1.0.2/test/module.defs
+--- HandBrake-1.0.2/test/module.defs.va	2017-01-22 17:49:13.000000000 +0100
++++ HandBrake-1.0.2/test/module.defs	2017-01-28 23:54:19.637153799 +0100
+@@ -21,9 +21,6 @@ TEST.GCC.l = \
+ 
+ ifeq (1,$(FEATURE.qsv))
+     TEST.GCC.D += USE_QSV HAVE_THREADS=1
+-ifeq ($(BUILD.system),linux)
+-    TEST.GCC.l += va va-drm
+-endif
+ endif
+ 
+ ifeq (1,$(FEATURE.x265))
