@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.0.3
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -120,7 +120,9 @@ This package contains the main program with a graphical interface.
 
 %prep
 %setup -q %{!?tag:-n %{name}-%{commit0}}
+%if 0%{?fedora} <= 25
 %patch1 -p1
+%endif
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -223,6 +225,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Mar 18 2017 Xavier Bachelot <xavier@bachelot.org> - 1.0.3-2
+- Don't apply clip_id patch for releases shipping with libbluray 1.0.0.
+
 * Wed Mar 08 2017 Xavier Bachelot <xavier@bachelot.org> - 1.0.3-1
 - Update to 1.0.3.
 - Use Recommends: only for Fedora.
