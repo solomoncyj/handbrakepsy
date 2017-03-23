@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.0.3
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -29,6 +29,8 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 
 %{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
+# add ppc64le to configure.guess
+Patch0:         %{name}-add_ppc64le.patch
 # Build with unpatched libbluray (https://github.com/HandBrake/HandBrake/pull/458)
 # can be dropped with libbluray-1.0.0
 Patch1:         %{name}-no_clip_id.patch
@@ -120,6 +122,7 @@ This package contains the main program with a graphical interface.
 
 %prep
 %setup -q %{!?tag:-n %{name}-%{commit0}}
+%patch0 -p1
 %if 0%{?fedora} <= 25
 %patch1 -p1
 %endif
@@ -225,6 +228,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Mar 23 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.3-4
+- Fix ppc64le build
+
 * Sat Mar 18 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 1.0.3-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
