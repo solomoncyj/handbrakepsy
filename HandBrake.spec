@@ -6,6 +6,7 @@
 # Build with "--without ffmpeg" or enable this to use bundled libAV
 # instead of system FFMpeg libraries. Unfortunately with FFMpeg UTF-8
 # subtitles are not recognized in media source files. :(
+# https://trac.ffmpeg.org/ticket/6304
 #global _without_ffmpeg 1
 
 %ifarch i686 x86_64
@@ -15,8 +16,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.0.3
-Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.0.7
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -228,6 +229,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Apr 12 2017 Simone Caronni <negativo17@gmail.com> - 1.0.7-1
+- Update to latest 1.0.7.
+
 * Thu Mar 23 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.3-4
 - Fix ppc64le build
 
