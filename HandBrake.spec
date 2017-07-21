@@ -103,8 +103,6 @@ This package contains the command line version of the program.
 
 %package gui
 Summary:        An open-source multiplatform video transcoder (GUI)
-Obsoletes:      HandBrake-gui < %{version}-%{release}
-Provides:       HandBrake-gui = %{version}-%{release}
 Provides:       handbrake-gui = %{version}-%{release}
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
@@ -230,6 +228,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Thu Jul 20 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-4
 - update commit id to match 1.0.7 release
+- drop redundant Provides/Obsoletes
 
 * Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-3
 - Rebuild for ffmpeg and x265 update
