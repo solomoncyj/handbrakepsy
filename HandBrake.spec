@@ -23,7 +23,7 @@ License:        GPLv2+
 URL:            http://handbrake.fr/
 
 %if 0%{?tag:1}
-Source0:        https://handbrake.fr/rotation.php?file=%{name}-%{version}.tar.bz2#/%{name}-%{version}.tar.bz2
+Source0:        https://handbrake.fr/mirror/%{name}-%{version}.tar.bz2
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
@@ -229,6 +229,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 * Thu Jul 20 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-4
 - update commit id to match 1.0.7 release
 - drop redundant Provides/Obsoletes
+- switch to a source URL that works with spectool/curl
 
 * Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-3
 - Rebuild for ffmpeg and x265 update
