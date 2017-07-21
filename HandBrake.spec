@@ -1,5 +1,5 @@
-%global commit0 51943f4115cb540793713571120f25414ab805d8
-%global date 20170122
+%global commit0 91ed34ff38d46f389e841c46fe27b7cbfed8467c
+%global date 20170409
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -228,6 +228,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Jul 20 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-4
+- update commit id to match 1.0.7 release
+
 * Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-3
 - Rebuild for ffmpeg and x265 update
 
