@@ -24,6 +24,11 @@ URL:            http://handbrake.fr/
 
 %if 0%{?tag:1}
 Source0:        https://handbrake.fr/mirror/%{name}-%{version}.tar.bz2
+Source1:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/%{name}-%{version}.tar.bz2.sig
+# import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
+# gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
+Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
+BuildRequires:  gnupg2
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
@@ -119,6 +124,9 @@ protection.
 This package contains the main program with a graphical interface.
 
 %prep
+%if 0%{?tag:1}
+gpgv2 --keyring %{S:2} %{S:1} %{S:0}
+%endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
 %patch0 -p1
 %if 0%{?fedora} <= 25
@@ -230,6 +238,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 - update commit id to match 1.0.7 release
 - drop redundant Provides/Obsoletes
 - switch to a source URL that works with spectool/curl
+- add GPG signature and verify it in prep
 
 * Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-3
 - Rebuild for ffmpeg and x265 update
