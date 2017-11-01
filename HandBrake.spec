@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        6%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -234,6 +234,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Nov 01 2017 Sérgio Basto <sergio@serjux.com> - 1.0.7-7
+- Rebuild for x265 update
+
 * Thu Aug 31 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 1.0.7-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
