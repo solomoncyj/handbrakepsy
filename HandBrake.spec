@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        8%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -71,8 +71,7 @@ BuildRequires:  libdvdread-devel >= 5.0.0
 %{?_with_fdk:BuildRequires:  libfdk-aac-devel >= 0.1.4}
 BuildRequires:  libgudev-devel
 %if 0%{?_with_mfx:1}
-BuildRequires:  libmfx-devel >= 1.16
-#BuildRequires:  libva-devel
+BuildRequires:  libmfx-devel >= 1.23-1
 %endif
 BuildRequires:  libmpeg2-devel >= 0.5.1
 BuildRequires:  libnotify-devel
@@ -234,6 +233,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Dec 01 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-8
+- Rebuild against new libmfx (rhbz#1471768)
+
 * Wed Nov 01 2017 Sérgio Basto <sergio@serjux.com> - 1.0.7-7
 - Rebuild for x265 update
 
