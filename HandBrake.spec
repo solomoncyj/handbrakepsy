@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        8%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -46,6 +46,8 @@ Patch2:         %{name}-system-OpenCL.patch
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
+# Fix SubRip subtitle issue when built with FFmpeg
+Patch5:         https://trac.ffmpeg.org/raw-attachment/ticket/6304/handbrake_subrip.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -135,6 +137,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%{!?_without_ffmpeg:%patch5 -p1}
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
@@ -234,6 +237,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Dec 29 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-8
+- Fix SubRip subtitle issue when built with FFmpeg
+
 * Wed Nov 01 2017 Sérgio Basto <sergio@serjux.com> - 1.0.7-7
 - Rebuild for x265 update
 
