@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        9%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        10%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -236,6 +236,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Dec 31 2017 Sérgio Basto <sergio@serjux.com> - 1.0.7-10
+- Mass rebuild for x264 and x265
+
 * Fri Dec 29 2017 Dominik Mierzejewski <rpm@greysector.net> - 1.0.7-9
 - Fix SubRip subtitle issue when built with FFmpeg
 
