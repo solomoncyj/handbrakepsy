@@ -48,6 +48,10 @@ Patch3:         %{name}-nostrip.patch
 Patch4:         %{name}-no-libva.patch
 # Fix SubRip subtitle issue when built with FFmpeg
 Patch5:         https://trac.ffmpeg.org/raw-attachment/ticket/6304/handbrake_subrip.patch
+# ffmpeg35_buildfix.patch is taken from these upstream commits
+# https://github.com/HandBrake/HandBrake/commit/532f067cca2113ea289282ea57e594efab5ba2a0
+# https://github.com/HandBrake/HandBrake/commit/f002cf7ad405b93c5bc52e3f12c960c4514b7957
+Patch6:         ffmpeg35_buildfix.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -137,6 +141,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch3 -p1
 %patch4 -p1
 %{!?_without_ffmpeg:%patch5 -p1}
+%patch6 -p1
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
