@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        12%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        13%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -205,23 +205,21 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.deskto
 
 %find_lang ghb
 
+%if 0%{?fedora} <= 24 || 0%{?rhel}
 %post gui
 touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-%if 0%{?fedora} <= 24 || 0%{?rhel}
 /usr/bin/update-desktop-database &> /dev/null || :
-%endif
 
 %postun gui
 if [ $1 -eq 0 ] ; then
     touch --no-create %{_datadir}/icons/hicolor &>/dev/null
     gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
-%if 0%{?fedora} <= 24 || 0%{?rhel}
 /usr/bin/update-desktop-database &> /dev/null || :
-%endif
 
 %posttrans gui
 gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+%endif
 
 %files -f ghb.lang gui
 %license COPYING
@@ -241,6 +239,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Feb 28 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-13
+- Rebuilt for new x265
+- Fix scriptlets
+
 * Sat Jan 27 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-12
 - Rebuilt for new libvpx
 
