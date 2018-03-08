@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.0.7
-Release:        13%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        14%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -239,6 +239,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.0.7-14
+- Rebuilt for new ffmpeg snapshot
+
 * Wed Feb 28 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.0.7-13
 - Rebuilt for new x265
 - Fix scriptlets
