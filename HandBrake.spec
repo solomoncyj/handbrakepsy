@@ -1,5 +1,5 @@
-%global commit0 91ed34ff38d46f389e841c46fe27b7cbfed8467c
-%global date 20170409
+%global commit0 b463d33a4ed4c9da5fb6432e7fb7e08422fc1aad
+%global date 20180405
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -16,15 +16,15 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.0.7
-Release:        14%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.1.0
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
 
 %if 0%{?tag:1}
-Source0:        https://handbrake.fr/mirror/%{name}-%{version}.tar.bz2
-Source1:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/%{name}-%{version}.tar.bz2.sig
+Source0:        https://download2.handbrake.fr/%{version}/%{name}-%{version}-source.tar.bz2
+Source1:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/%{name}-%{version}-source.tar.bz2.sig
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
@@ -35,8 +35,6 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 
 %{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
-# add ppc64le to configure.guess
-Patch0:         %{name}-add_ppc64le.patch
 # Build with unpatched libbluray (https://github.com/HandBrake/HandBrake/pull/458)
 # can be dropped with libbluray-1.0.0
 Patch1:         %{name}-no_clip_id.patch
@@ -48,16 +46,12 @@ Patch3:         %{name}-nostrip.patch
 Patch4:         %{name}-no-libva.patch
 # Fix SubRip subtitle issue when built with FFmpeg
 Patch5:         https://trac.ffmpeg.org/raw-attachment/ticket/6304/handbrake_subrip.patch
-# ffmpeg35_buildfix.patch is taken from these upstream commits
-# https://github.com/HandBrake/HandBrake/commit/532f067cca2113ea289282ea57e594efab5ba2a0
-# https://github.com/HandBrake/HandBrake/commit/f002cf7ad405b93c5bc52e3f12c960c4514b7957
-Patch6:         ffmpeg35_buildfix.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
-%{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 2.6}
+%{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
@@ -133,7 +127,6 @@ This package contains the main program with a graphical interface.
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
-%patch0 -p1
 %if 0%{?fedora} <= 25
 %patch1 -p1
 %endif
@@ -141,7 +134,6 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch3 -p1
 %patch4 -p1
 %{!?_without_ffmpeg:%patch5 -p1}
-%patch6 -p1
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
@@ -239,6 +231,12 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Mon Apr 09 2018 Dominik Mierzejewski <rpm@greysector.net> - 1.1.0-1
+- Update to 1.1.0
+- Update source and signature URLs
+- Drop obsolete patches
+- Bump FFmpeg version requirement to 3.5+ due to AV_PKT_FLAG_DISPOSABLE API use
+
 * Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.0.7-14
 - Rebuilt for new ffmpeg snapshot
 

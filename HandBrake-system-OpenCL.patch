@@ -10,39 +10,3 @@ diff -up HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/internal.h.cl 
  #ifdef USE_QSV
  #include "qsv_libav.h"
  #endif
-diff -up HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/opencl.h.cl HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/opencl.h
---- HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/opencl.h.cl	2017-01-19 15:01:20.000000000 +0100
-+++ HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/opencl.h	2017-01-20 11:51:28.511218948 +0100
-@@ -10,7 +10,7 @@
- #ifndef HB_OPENCL_H
- #define HB_OPENCL_H
- 
--#include "extras/cl.h"
-+#include <CL/cl.h>
- #include "openclwrapper.h"
- 
- // we only support OpenCL 1.1 or later
-diff -up HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.c.cl HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.c
---- HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.c.cl	2017-01-19 15:01:20.000000000 +0100
-+++ HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.c	2017-01-20 11:51:28.511218948 +0100
-@@ -13,7 +13,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
--#include "extras/cl.h"
-+#include <CL/cl.h>
- #include "opencl.h"
- #include "openclwrapper.h"
- #include "openclkernels.h"
-diff -up HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.h.cl HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.h
---- HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.h.cl	2017-01-19 15:01:20.000000000 +0100
-+++ HandBrake-40ec4ebaa2958b2549125dd525b6fcb2bd595d69/libhb/openclwrapper.h	2017-01-20 11:51:28.511218948 +0100
-@@ -15,7 +15,7 @@
- #define HB_OPENCL_WRAPPER_H
- 
- #include "common.h"
--#include "extras/cl.h"
-+#include <CL/cl.h>
- 
- //support AMD opencl
- #define CL_QUEUE_THREAD_HANDLE_AMD 0x403E
