@@ -17,7 +17,7 @@
 
 Name:           HandBrake
 Version:        1.1.0
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -231,6 +231,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Jun 17 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.0-2
+- Rebuild for new libass version
+
 * Mon Apr 09 2018 Dominik Mierzejewski <rpm@greysector.net> - 1.1.0-1
 - Update to 1.1.0
 - Update source and signature URLs
