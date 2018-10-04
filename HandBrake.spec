@@ -56,7 +56,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
 BuildRequires:  fribidi-devel >= 0.19.4
-BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  gstreamer1-plugins-base-devel
 BuildRequires:  intltool
 BuildRequires:  jansson-devel
@@ -233,6 +233,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Thu Oct 04 2018 Sérgio Basto <sergio@serjux.com> - 1.1.0-4
 - Mass rebuild for x264 and/or x265
+- Add BuildRequires: gcc-c++
 
 * Thu Jul 26 2018 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.1.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
