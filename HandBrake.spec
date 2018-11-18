@@ -16,8 +16,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.1.0
-Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.1.2
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -190,8 +190,6 @@ install -D -p -m 644 gtk/src/%{desktop_id}.desktop \
     %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
 install -D -p -m 644 gtk/src/%{desktop_id}.svg \
     %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
-install -D -p -m 644 gtk/src/%{desktop_id}.appdata.xml \
-    %{buildroot}/%{_datadir}/appdata/%{desktop_id}.appdata.xml
 
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
 
@@ -218,9 +216,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %doc AUTHORS.markdown NEWS.markdown README.markdown THANKS.markdown
 %{_bindir}/ghb
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%{_datadir}/appdata/%{desktop_id}.appdata.xml
+%{_metainfodir}/%{desktop_id}.appdata.xml
 %else
-%exclude %{_datadir}/appdata/%{desktop_id}.appdata.xml
+%exclude %{_metainfodir}/%{desktop_id}.appdata.xml
 %endif
 %{_datadir}/applications/%{desktop_id}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
@@ -231,6 +229,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Nov 18 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.2-1
+- Rebuild for new x265
+- Update to 1.1.2
+
 * Thu Oct 04 2018 Sérgio Basto <sergio@serjux.com> - 1.1.0-4
 - Mass rebuild for x264 and/or x265
 - Add BuildRequires: gcc-c++
