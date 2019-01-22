@@ -10,13 +10,14 @@
 #global _without_ffmpeg 1
 
 %ifarch i686 x86_64
+%global _with_asm 1
 %global _with_mfx 1
 %endif
 
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.1.2
+Version:        1.2.0
 Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
@@ -44,8 +45,6 @@ Patch2:         %{name}-system-OpenCL.patch
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
-# Fix SubRip subtitle issue when built with FFmpeg
-Patch5:         https://trac.ffmpeg.org/raw-attachment/ticket/6304/handbrake_subrip.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -83,12 +82,18 @@ BuildRequires:  libvorbis-devel
 # Should be >= 1.5:
 BuildRequires:  libvpx-devel >= 1.3
 BuildRequires:  make
+%if 0%{?_with_asm:1}
+BuildRequires:  nasm
+%endif
+BuildRequires:  nv-codec-headers
 BuildRequires:  opencl-headers
 BuildRequires:  opus-devel
 BuildRequires:  python
+BuildRequires:  speex-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
 BuildRequires:  yasm
+BuildRequires:  xz-devel
 
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
@@ -127,18 +132,17 @@ This package contains the main program with a graphical interface.
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
-%if 0%{?fedora} <= 25
+%if 0%{?rhel}
 %patch1 -p1
 %endif
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%{!?_without_ffmpeg:%patch5 -p1}
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_mfx:libmfx} libvpx x265; do
+for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_mfx:libmfx} nvenc libvpx x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 rm libhb/extras/cl{,_platform}.h
@@ -173,6 +177,7 @@ echo "GCC.args.g.none = " >> custom.defs
     --verbose \
     --disable-df-fetch \
     --disable-gtk-update-checks \
+    %{?_with_asm:--enable-asm} \
     --enable-x265 \
     %{?_with_fdk:--enable-fdk-aac} \
     %{?_with_mfx:--enable-qsv}
@@ -229,6 +234,13 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Jan 20 2019 Dominik Mierzejewski <rpm@greysector.net> - 1.2.0-1
+- Update to 1.2.0
+- Drop upstreamed subtitle handling patch
+- Make libbluray patch EL-only, all current Fedoras have >1.0.0
+- new dependencies: speex, xz
+- enable asm parts on x86
+
 * Sun Nov 18 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.2-1
 - Rebuild for new x265
 - Update to 1.1.2
