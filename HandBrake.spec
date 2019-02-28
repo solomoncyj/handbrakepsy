@@ -17,7 +17,7 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.2.0
+Version:        1.2.2
 Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
@@ -234,6 +234,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Feb 28 2019 Leigh Scott <leigh123linux@googlemail.com> - 1.2.2-1
+- Update to 1.2.2
+
 * Sun Jan 20 2019 Dominik Mierzejewski <rpm@greysector.net> - 1.2.0-1
 - Update to 1.2.0
 - Drop upstreamed subtitle handling patch
