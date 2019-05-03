@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.2.2
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -234,6 +234,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri May 03 2019 Leigh Scott <leigh123linux@gmail.com> - 1.2.2-4
+- Rebuild for new gstreamer1 version
+
 * Tue Mar 12 2019 Sérgio Basto <sergio@serjux.com> - 1.2.2-3
 - Mass rebuild for x264
 
