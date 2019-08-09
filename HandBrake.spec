@@ -47,7 +47,7 @@ Patch3:         %{name}-nostrip.patch
 Patch4:         %{name}-no-libva.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
-BuildRequires:  cmake
+BuildRequires:  cmake3
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
 %{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
@@ -88,7 +88,7 @@ BuildRequires:  nasm
 BuildRequires:  nv-codec-headers
 BuildRequires:  opencl-headers
 BuildRequires:  opus-devel
-BuildRequires:  python
+BuildRequires:  python2
 BuildRequires:  speex-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
