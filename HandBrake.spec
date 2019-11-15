@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.2.2
-Release:        6%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -234,6 +234,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Nov 15 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.2.2-7
+- rebuild for libdvdread ABI bump
+
 * Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 1.2.2-6
 - Rebuild for new ffmpeg version
 
