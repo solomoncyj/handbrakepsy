@@ -1,5 +1,5 @@
-%global commit0 b463d33a4ed4c9da5fb6432e7fb7e08422fc1aad
-%global date 20180405
+%global commit0 4672248655ddd687161bacdb539c208abde15c59
+%global date 20191109
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.0
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -248,6 +248,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Nov 27 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.3.0-2
+- update commit hash and date for 1.3.0 release
+
 * Thu Nov 21 2019 FeRD (Frank Dana) <ferdnyc@gmail.com> - 1.3.0-1
 - New upstream version (fixes compilation with Pango 1.44+)
 - New dependencies: libdav1d, libdrm, libva, numactl
