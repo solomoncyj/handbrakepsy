@@ -73,6 +73,7 @@ BuildRequires:  libdvdread-devel >= 5.0.0
 BuildRequires:  libgudev-devel
 %if 0%{?_with_mfx:1}
 BuildRequires:  libmfx-devel >= 1.23-1
+BuildRequires:  libva-devel
 %endif
 BuildRequires:  libmpeg2-devel >= 0.5.1
 BuildRequires:  libnotify-devel
@@ -242,7 +243,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Thu Nov 21 2019 FeRD (Frank Dana) <ferdnyc@gmail.com> - 1.3.0-1
 - New upstream version (fixes compilation with Pango 1.44+)
-- New dependencies: libdrm, libdav1d, numactl
+- New dependencies: libdav1d, libdrm, libva, numactl
 - fixes rfbz#5426
 
 * Fri Nov 15 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.2.2-7
