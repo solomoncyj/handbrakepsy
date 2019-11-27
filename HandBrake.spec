@@ -45,6 +45,8 @@ Patch3:         %{name}-nostrip.patch
 Patch4:         %{name}-no-libva.patch
 # Fix QSV with unpatched system FFmpeg
 Patch5:         %{name}-qsv.patch
+# Fix build on non-x86 (without nasm)
+Patch6:         %{name}-no-nasm.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -146,6 +148,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %else
 %patch5 -p1
 %endif
+%patch6 -p1
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
@@ -250,6 +253,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 - New dependencies: libdav1d, libdrm, libva, numactl
 - dropped dependencies: yasm
 - fixes rfbz#5426
+- fix build on non-x86 (without nasm)
 
 * Fri Nov 15 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.2.2-7
 - rebuild for libdvdread ABI bump
