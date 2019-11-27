@@ -89,14 +89,15 @@ BuildRequires:  meson
 %if 0%{?_with_asm:1}
 BuildRequires:  nasm
 %endif
+%ifnarch %{arm}
 BuildRequires:  numactl-devel
+%endif
 BuildRequires:  nv-codec-headers
 BuildRequires:  opus-devel
 BuildRequires:  python3
 BuildRequires:  speex-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
-BuildRequires:  yasm
 BuildRequires:  xz-devel
 
 Requires:       hicolor-icon-theme
@@ -186,6 +187,9 @@ echo "GCC.args.g.none = " >> custom.defs
     --disable-gtk-update-checks \
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
+%ifarch %{arm}
+    --disable-numa \
+%endif
     %{?_with_fdk:--enable-fdk-aac} \
     %{?_with_mfx:--enable-qsv}
 
@@ -244,6 +248,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 * Thu Nov 21 2019 FeRD (Frank Dana) <ferdnyc@gmail.com> - 1.3.0-1
 - New upstream version (fixes compilation with Pango 1.44+)
 - New dependencies: libdav1d, libdrm, libva, numactl
+- dropped dependencies: yasm
 - fixes rfbz#5426
 
 * Fri Nov 15 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.2.2-7
