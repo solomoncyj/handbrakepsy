@@ -17,8 +17,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.2.2
-Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.3.0
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -39,12 +39,12 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 # Build with unpatched libbluray (https://github.com/HandBrake/HandBrake/pull/458)
 # can be dropped with libbluray-1.0.0
 Patch1:         %{name}-no_clip_id.patch
-# Use system OpenCL headers
-Patch2:         %{name}-system-OpenCL.patch
 # Pass strip tool override to gtk/configure
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
+# Fix QSV with unpatched system FFmpeg
+Patch5:         %{name}-qsv.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -64,10 +64,12 @@ BuildRequires:  libappindicator-gtk3-devel
 # Should be >= 0.13.2:
 BuildRequires:  libass-devel >= 0.13.1
 BuildRequires:  libbluray-devel >= 0.9.3
+BuildRequires:  libdav1d-devel
+BuildRequires:  libdrm-devel
 BuildRequires:  libdvdnav-devel >= 5.0.1
 BuildRequires:  libdvdread-devel >= 5.0.0
 # FDK is non-free
-%{?_with_fdk:BuildRequires:  libfdk-aac-devel >= 0.1.4}
+%{?_with_fdk:BuildRequires:  fdk-aac-devel >= 0.1.4}
 BuildRequires:  libgudev-devel
 %if 0%{?_with_mfx:1}
 BuildRequires:  libmfx-devel >= 1.23-1
@@ -82,13 +84,14 @@ BuildRequires:  libvorbis-devel
 # Should be >= 1.5:
 BuildRequires:  libvpx-devel >= 1.3
 BuildRequires:  make
+BuildRequires:  meson
 %if 0%{?_with_asm:1}
 BuildRequires:  nasm
 %endif
+BuildRequires:  numactl-devel
 BuildRequires:  nv-codec-headers
-BuildRequires:  opencl-headers
 BuildRequires:  opus-devel
-BuildRequires:  python2
+BuildRequires:  python3
 BuildRequires:  speex-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
@@ -135,17 +138,19 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{?rhel}
 %patch1 -p1
 %endif
-%patch2 -p1
 %patch3 -p1
+%if 0%{!?_with_mfx}
 %patch4 -p1
+%else
+%patch5 -p1
+%endif
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_mfx:libmfx} nvenc libvpx x265; do
+for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_mfx:libmfx} nvenc libvpx x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
-rm libhb/extras/cl{,_platform}.h
 
 # Fix desktop file
 sed -i -e 's/%{desktop_id}.svg/%{desktop_id}/g' gtk/src/%{desktop_id}.desktop
@@ -165,7 +170,7 @@ export http_proxy=http://127.0.0.1
 # By default the project is built with optimizations for speed and no debug.
 # Override configure settings by passing RPM_OPT_FLAGS and disabling preset
 # debug options.
-echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -lx265 %{?_with_fdk:-lfdk-aac} %{?_with_mfx:-lmfx}" > custom.defs
+echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_fdk:-lfdk-aac} %{?_with_mfx:-lmfx}" > custom.defs
 echo "GCC.args.g.none = " >> custom.defs
 
 # Not an autotools configure script.
@@ -176,6 +181,7 @@ echo "GCC.args.g.none = " >> custom.defs
     --strip=%{_bindir}/echo \
     --verbose \
     --disable-df-fetch \
+    --disable-df-verify \
     --disable-gtk-update-checks \
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
@@ -234,6 +240,11 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Nov 21 2019 FeRD (Frank Dana) <ferdnyc@gmail.com> - 1.3.0-1
+- New upstream version (fixes compilation with Pango 1.44+)
+- New dependencies: libdrm, libdav1d, numactl
+- fixes rfbz#5426
+
 * Fri Nov 15 2019 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.2.2-7
 - rebuild for libdvdread ABI bump
 
