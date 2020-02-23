@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.0
-Release:        6%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -248,6 +248,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Feb 23 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.3.0-7
+- Rebuild for x265
+
 * Sat Feb 22 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.3.0-6
 - Rebuild for ffmpeg-4.3 git
 
