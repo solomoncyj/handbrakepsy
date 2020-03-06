@@ -1,5 +1,5 @@
-%global commit0 4672248655ddd687161bacdb539c208abde15c59
-%global date 20191109
+%global commit0 b6df6dfce4105d89de37530c0da0a9d6dce5de00
+%global date 20200101
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -17,15 +17,15 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.3.0
-Release:        7%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.3.1
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
 
 %if 0%{?tag:1}
-Source0:        https://download2.handbrake.fr/%{version}/%{name}-%{version}-source.tar.bz2
-Source1:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/%{name}-%{version}-source.tar.bz2.sig
+Source0:        https://github.com/%{name}/%{name}/releases/download/%{version}/%{name}-%{version}-source.tar.bz2
+Source1:        https://github.com/%{name}/%{name}/releases/download/%{version}/%{name}-%{version}-source.tar.bz2.sig
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
@@ -214,7 +214,7 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.deskto
 
 %find_lang ghb
 
-%if 0%{?fedora} <= 24 || 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 %post gui
 touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 /usr/bin/update-desktop-database &> /dev/null || :
@@ -248,6 +248,11 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Mar 06 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.1-1
+- New upstream version
+- Update source URL
+- Run scriptlets on el7 only
+
 * Sun Feb 23 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.3.0-7
 - Rebuild for x265
 
