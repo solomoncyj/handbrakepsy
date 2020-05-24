@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.2
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -248,6 +248,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun May 24 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.2-2
+- Rebuild for dav1d SONAME bump
+
 * Tue May 05 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.2-1
 - New upstream version
 
