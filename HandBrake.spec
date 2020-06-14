@@ -1,5 +1,5 @@
-%global commit0 a91adfa02ce544c84aa34e758b85f0967d005aa7
-%global date 20200503
+%global commit0 012a0f15dfab1383899a6a04f7c84a336b578d70
+%global date 20200613
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -17,8 +17,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.3.2
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.3.3
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -248,6 +248,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Jun 14 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.3-1
+- New upstream version
+
 * Sun May 31 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.2-3
 - Rebuild for new x265 version
 
