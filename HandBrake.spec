@@ -52,6 +52,9 @@ BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
+%if 0%{?fedora} || 0%{?rhel} >= 7
+BuildRequires:  libappstream-glib
+%endif
 %{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
@@ -212,6 +215,10 @@ install -D -p -m 644 gtk/src/%{desktop_id}.svg \
 
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
 
+%if 0%{?fedora} || 0%{?rhel} >= 7
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.metainfo.xml
+%endif
+
 %find_lang ghb
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -235,9 +242,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %doc AUTHORS.markdown NEWS.markdown README.markdown THANKS.markdown
 %{_bindir}/ghb
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%{_metainfodir}/%{desktop_id}.appdata.xml
+%{_metainfodir}/%{desktop_id}.metainfo.xml
 %else
-%exclude %{_metainfodir}/%{desktop_id}.appdata.xml
+%exclude %{_metainfodir}/%{desktop_id}.metainfo.xml
 %endif
 %{_datadir}/applications/%{desktop_id}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
