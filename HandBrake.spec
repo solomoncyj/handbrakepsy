@@ -47,12 +47,15 @@ Patch4:         %{name}-no-libva.patch
 Patch5:         %{name}-qsv.patch
 # Fix build on non-x86 (without nasm)
 Patch6:         %{name}-no-nasm.patch
+# rhel gettext is too old to support metainfo
+# https://github.com/HandBrake/HandBrake/pull/2884
+Patch7:         %{name}-no-metainfo.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
-%if 0%{?fedora} || 0%{?rhel} >= 7
+%if 0%{?fedora}
 BuildRequires:  libappstream-glib
 %endif
 %{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
@@ -152,6 +155,9 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch5 -p1
 %endif
 %patch6 -p1
+%if 0%{?rhel}
+%patch7 -p1
+%endif
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
@@ -215,7 +221,7 @@ install -D -p -m 644 gtk/src/%{desktop_id}.svg \
 
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
 
-%if 0%{?fedora} || 0%{?rhel} >= 7
+%if 0%{?fedora}
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.metainfo.xml
 %endif
 
@@ -241,10 +247,8 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %license COPYING
 %doc AUTHORS.markdown NEWS.markdown README.markdown THANKS.markdown
 %{_bindir}/ghb
-%if 0%{?fedora} || 0%{?rhel} >= 7
+%if 0%{?fedora}
 %{_metainfodir}/%{desktop_id}.metainfo.xml
-%else
-%exclude %{_metainfodir}/%{desktop_id}.metainfo.xml
 %endif
 %{_datadir}/applications/%{desktop_id}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
