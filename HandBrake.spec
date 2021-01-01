@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.3
-Release:        8%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        9%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -259,6 +259,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Jan  1 2021 Leigh Scott <leigh123linux@gmail.com> - 1.3.3-9
+- Rebuilt for new ffmpeg snapshot
+
 * Mon Dec 14 2020 Leigh Scott <leigh123linux@gmail.com> - 1.3.3-8
 - Actually do the dav1d rebuild
 
