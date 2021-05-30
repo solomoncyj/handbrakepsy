@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.3
-Release:        11%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        12%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -50,6 +50,8 @@ Patch6:         %{name}-no-nasm.patch
 # rhel gettext is too old to support metainfo
 # https://github.com/HandBrake/HandBrake/pull/2884
 Patch7:         %{name}-no-metainfo.patch
+# https://github.com/HandBrake/HandBrake/pull/3537
+Patch8:         https://github.com/HandBrake/HandBrake/commit/f28289fb06ab461ea082b4be56d6d1504c0c31c2.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -158,6 +160,9 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{?rhel}
 %patch7 -p1
 %endif
+%if 0%{fedora} > 33
+%patch8 -p1
+%endif
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
@@ -259,6 +264,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun May 30 2021 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.3.0-12
+- fix audio encoders when linking to FFmpeg 4.4 (rfbz#6006)
+
 * Wed Apr 14 2021 Leigh Scott <leigh123linux@gmail.com> - 1.3.3-11
 - Rebuild for new x265
 
