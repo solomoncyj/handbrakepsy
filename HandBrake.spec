@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.3
-Release:        12%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        13%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -264,6 +264,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Jul 10 2021 Sérgio Basto <sergio@serjux.com> - 1.3.3-13
+- Mass rebuild for x264-0.163
+
 * Sun May 30 2021 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.3.0-12
 - fix audio encoders when linking to FFmpeg 4.4 (rfbz#6006)
 
