@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.3.3
-Release:        13%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        14%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -264,6 +264,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Mon Aug 02 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.3.3-14
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Sat Jul 10 2021 Sérgio Basto <sergio@serjux.com> - 1.3.3-13
 - Mass rebuild for x264-0.163
 
