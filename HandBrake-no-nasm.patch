@@ -1,7 +1,6 @@
-diff -up HandBrake-1.3.2/make/configure.py.orig HandBrake-1.3.2/make/configure.py
---- HandBrake-1.3.2/make/configure.py.orig	2020-05-03 17:12:08.000000000 +0100
-+++ HandBrake-1.3.2/make/configure.py	2020-05-05 09:25:31.662467659 +0100
-@@ -1608,7 +1608,7 @@ try:
+--- a/make/configure.py
++++ b/make/configure.py
+@@ -1655,7 +1655,7 @@ try:
          lipo       = ToolProbe( 'LIPO.exe',       'lipo',       'lipo', abort=False )
          pkgconfig  = ToolProbe( 'PKGCONFIG.exe',  'pkgconfig',  'pkg-config', abort=True, minversion=[0,27,0] )
          meson      = ToolProbe( 'MESON.exe',      'meson',      'meson', abort=True, minversion=[0,47,0] )
@@ -9,4 +8,4 @@ diff -up HandBrake-1.3.2/make/configure.py.orig HandBrake-1.3.2/make/configure.p
 +        nasm       = ToolProbe( 'NASM.exe',       'asm',        'nasm', abort=False, minversion=[2,13,0] )
          ninja      = ToolProbe( 'NINJA.exe',      'ninja',      'ninja-build', 'ninja', abort=True )
  
-         xcodebuild = ToolProbe( 'XCODEBUILD.exe', 'xcodebuild', 'xcodebuild', abort=(True if (build_tuple.match('*-*-darwin*') and cross is None) else False), versionopt='-version', minversion=[10,3,0] )
+         xcodebuild = ToolProbe( 'XCODEBUILD.exe', 'xcodebuild', 'xcodebuild', abort=(True if (not xcode_opts['disabled'] and (build_tuple.match('*-*-darwin*') and cross is None)) else False), versionopt='-version', minversion=[10,3,0] )

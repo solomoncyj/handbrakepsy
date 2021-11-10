@@ -1,5 +1,5 @@
-%global commit0 012a0f15dfab1383899a6a04f7c84a336b578d70
-%global date 20200613
+%global commit0 a8bc2549b3de632e2597cb133bc3aa20ca8a3629
+%global date 20210930
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -17,8 +17,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.3.3
-Release:        15%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.4.2
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -50,8 +50,6 @@ Patch6:         %{name}-no-nasm.patch
 # rhel gettext is too old to support metainfo
 # https://github.com/HandBrake/HandBrake/pull/2884
 Patch7:         %{name}-no-metainfo.patch
-# https://github.com/HandBrake/HandBrake/pull/3537
-Patch8:         https://github.com/HandBrake/HandBrake/commit/f28289fb06ab461ea082b4be56d6d1504c0c31c2.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -69,6 +67,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  gstreamer1-plugins-base-devel
 BuildRequires:  intltool
 BuildRequires:  jansson-devel
+BuildRequires:  turbojpeg-devel
 BuildRequires:  lame-devel >= 3.98
 BuildRequires:  libappindicator-gtk3-devel
 # Should be >= 0.13.2:
@@ -109,6 +108,7 @@ BuildRequires:  speex-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
 BuildRequires:  xz-devel
+BuildRequires:  zimg-devel
 
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
@@ -154,14 +154,12 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{!?_with_mfx}
 %patch4 -p1
 %else
-%patch5 -p1
+# Needs checking
+#patch5 -p1
 %endif
 %patch6 -p1
 %if 0%{?rhel}
 %patch7 -p1
-%endif
-%if 0%{fedora} > 33
-%patch8 -p1
 %endif
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
@@ -264,6 +262,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Nov 10 2021 Leigh Scott <leigh123linux@gmail.com> - 1.4.2-1
+- New upstream version
+
 * Wed Nov 10 2021 Leigh Scott <leigh123linux@gmail.com> - 1.3.3-15
 - Rebuilt for new ffmpeg snapshot
 
