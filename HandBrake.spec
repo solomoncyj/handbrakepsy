@@ -50,6 +50,9 @@ Patch6:         %{name}-no-nasm.patch
 # rhel gettext is too old to support metainfo
 # https://github.com/HandBrake/HandBrake/pull/2884
 Patch7:         %{name}-no-metainfo.patch
+# Patch from Gentoo
+Patch8:         %{name}-ffmpeg-5.0.patch
+Patch9:         %{name}-x265-link.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -161,6 +164,9 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{?rhel}
 %patch7 -p1
 %endif
+%patch8 -p1
+%patch9 -p1
+
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
