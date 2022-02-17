@@ -17,8 +17,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.4.2
-Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.5.1
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -43,8 +43,6 @@ Patch1:         %{name}-no_clip_id.patch
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
-# Fix QSV with unpatched system FFmpeg
-Patch5:         %{name}-qsv.patch
 # Fix build on non-x86 (without nasm)
 Patch6:         %{name}-no-nasm.patch
 # rhel gettext is too old to support metainfo
@@ -53,6 +51,8 @@ Patch7:         %{name}-no-metainfo.patch
 # Patch from Gentoo
 Patch8:         %{name}-ffmpeg-5.0.patch
 Patch9:         %{name}-x265-link.patch
+# keep using MediaSDK
+Patch10:        %{name}-no-libvpl.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3
@@ -157,8 +157,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{!?_with_mfx}
 %patch4 -p1
 %else
-# Needs checking
-#patch5 -p1
+%patch10 -p1
 %endif
 %patch6 -p1
 %if 0%{?rhel}
@@ -171,7 +170,7 @@ mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
 
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_mfx:libmfx} nvenc libvpx x265; do
+for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_mfx:libmfx libvpl} nvenc libvpx x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
@@ -268,6 +267,11 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Feb 17 2022 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.5.1-1
+- new upstream version (rfbz#6221)
+- drop obsolete patch
+- keep building with libmfx
+
 * Tue Feb 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.4.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 

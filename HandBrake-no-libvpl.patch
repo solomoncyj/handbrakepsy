@@ -1,0 +1,84 @@
+diff -up HandBrake-1.5.1/libhb/enc_qsv.c.orig HandBrake-1.5.1/libhb/enc_qsv.c
+--- HandBrake-1.5.1/libhb/enc_qsv.c.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/libhb/enc_qsv.c	2022-02-17 13:57:36.709960390 +0100
+@@ -41,7 +41,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE PO
+ 
+ #include "libavutil/hwcontext_qsv.h"
+ #include "libavutil/hwcontext.h"
+-#include "vpl/mfxvideo.h"
++#include "mfx/mfxvideo.h"
+ 
+ /*
+  * The frame info struct remembers information about each frame across calls to
+diff -up HandBrake-1.5.1/libhb/handbrake/ports.h.orig HandBrake-1.5.1/libhb/handbrake/ports.h
+--- HandBrake-1.5.1/libhb/handbrake/ports.h.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/libhb/handbrake/ports.h	2022-02-17 13:59:03.276623855 +0100
+@@ -27,7 +27,7 @@
+ #include "handbrake/project.h"
+ 
+ #if HB_PROJECT_FEATURE_QSV
+-#include "vpl/mfxstructures.h"
++#include "mfx/mfxstructures.h"
+ #if defined(SYS_LINUX) || defined(SYS_FREEBSD)
+ #include <va/va_drm.h>
+ #endif
+diff -up HandBrake-1.5.1/libhb/handbrake/qsv_common.h.orig HandBrake-1.5.1/libhb/handbrake/qsv_common.h
+--- HandBrake-1.5.1/libhb/handbrake/qsv_common.h.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/libhb/handbrake/qsv_common.h	2022-02-17 13:58:23.563319471 +0100
+@@ -23,7 +23,7 @@ void hb_qsv_force_workarounds(); // for
+ #ifdef __LIBHB__
+ // Private API
+ 
+-#include "vpl/mfxvideo.h"
++#include "mfx/mfxvideo.h"
+ 
+ #define HB_QSV_VERSION_ATLEAST(MAJOR, MINOR)   \
+     (MFX_VERSION_MAJOR > (MAJOR) ||         \
+diff -up HandBrake-1.5.1/libhb/handbrake/qsv_libav.h.orig HandBrake-1.5.1/libhb/handbrake/qsv_libav.h
+--- HandBrake-1.5.1/libhb/handbrake/qsv_libav.h.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/libhb/handbrake/qsv_libav.h	2022-02-17 13:57:58.188124993 +0100
+@@ -116,7 +116,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE PO
+ 
+ #include <stdint.h>
+ #include <string.h>
+-#include "vpl/mfxvideo.h"
++#include "mfx/mfxvideo.h"
+ #include "libavutil/mem.h"
+ #include "libavutil/time.h"
+ #include "libavcodec/avcodec.h"
+diff -up HandBrake-1.5.1/libhb/qsv_common.c.orig HandBrake-1.5.1/libhb/qsv_common.c
+--- HandBrake-1.5.1/libhb/qsv_common.c.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/libhb/qsv_common.c	2022-02-17 13:57:20.460835853 +0100
+@@ -28,7 +28,7 @@
+ #include "libavfilter/buffersink.h"
+ #include "libavutil/hwcontext_qsv.h"
+ #include "libavutil/hwcontext.h"
+-#include "vpl/mfxadapter.h"
++#include "mfx/mfxadapter.h"
+ 
+ typedef struct hb_qsv_adapter_details
+ {
+diff -up HandBrake-1.5.1/gtk/configure.ac.orig HandBrake-1.5.1/gtk/configure.ac
+--- HandBrake-1.5.1/gtk/configure.ac.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/gtk/configure.ac	2022-02-17 14:04:54.529315971 +0100
+@@ -224,7 +224,7 @@ if test "x$use_x265" = "xyes" ; then
+ fi
+ 
+ if test "x$use_qsv" = "xyes" ; then
+-	HB_LIBS="$HB_LIBS -lvpl"
++	HB_LIBS="$HB_LIBS -lmfx"
+ fi
+ 
+ case $host in
+diff -up HandBrake-1.5.1/test/module.defs.orig HandBrake-1.5.1/test/module.defs
+--- HandBrake-1.5.1/test/module.defs.orig	2022-01-10 20:11:37.000000000 +0100
++++ HandBrake-1.5.1/test/module.defs	2022-02-17 14:13:07.946128348 +0100
+@@ -24,7 +24,7 @@ ifeq (,$(filter $(HOST.system),darwin cy
+ endif
+ 
+ ifeq (1,$(FEATURE.qsv))
+-    TEST.GCC.l += vpl
++    TEST.GCC.l += mfx
+ ifneq (,$(filter $(HOST.system),linux freebsd))
+     TEST.GCC.l += va va-drm
+ endif
