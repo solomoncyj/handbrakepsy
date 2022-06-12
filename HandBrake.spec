@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.5.1
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -267,6 +267,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Jun 12 2022 Sérgio Basto <sergio@serjux.com> - 1.5.1-2
+- Mass rebuild for x264-0.164
+
 * Thu Feb 17 2022 Dominik 'Rathann' Mierzejewski <rpm@greysector.net> - 1.5.1-1
 - new upstream version (rfbz#6221)
 - drop obsolete patch
