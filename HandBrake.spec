@@ -53,6 +53,7 @@ Patch8:         %{name}-ffmpeg-5.0.patch
 Patch9:         %{name}-x265-link.patch
 # keep using MediaSDK
 Patch10:        %{name}-no-libvpl.patch
+Patch11:        https://github.com/%{name}/%{name}/commit/7c92fda45573425fb3873b48919f9de2fb56c672.patch#/%{name}-ffmpeg-5.1.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake3

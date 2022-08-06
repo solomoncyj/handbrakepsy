@@ -1,0 +1,109 @@
+From 7c92fda45573425fb3873b48919f9de2fb56c672 Mon Sep 17 00:00:00 2001
+From: Damiano Galassi <damiog@gmail.com>
+Date: Sat, 16 Jul 2022 11:09:36 +0200
+Subject: [PATCH] libhb: fix build with FFmpeg 5.1, include libavutil/avutil.h
+ where needed.
+
+---
+ libhb/decsrtsub.c             | 1 +
+ libhb/demuxmpeg.c             | 1 +
+ libhb/encx264.c               | 2 +-
+ libhb/encx265.c               | 1 +
+ libhb/platform/macosx/encvt.c | 5 +++--
+ libhb/reader.c                | 2 ++
+ libhb/vfr.c                   | 1 +
+ 7 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/libhb/decsrtsub.c b/libhb/decsrtsub.c
+index 2b8c759fa8f..74da5404d60 100644
+--- a/libhb/decsrtsub.c
++++ b/libhb/decsrtsub.c
+@@ -12,6 +12,7 @@
+ #include <string.h>
+ #include <iconv.h>
+ #include <errno.h>
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ #include "handbrake/colormap.h"
+ #include "handbrake/decavsub.h"
+diff --git a/libhb/demuxmpeg.c b/libhb/demuxmpeg.c
+index 382fe73191c..f91d18e0b5b 100644
+--- a/libhb/demuxmpeg.c
++++ b/libhb/demuxmpeg.c
+@@ -7,6 +7,7 @@
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
+ 
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ 
+ static inline int check_mpeg_scr( hb_psdemux_t *state, int64_t scr, int tol )
+diff --git a/libhb/encx264.c b/libhb/encx264.c
+index 1eab5fa7522..06d99111236 100644
+--- a/libhb/encx264.c
++++ b/libhb/encx264.c
+@@ -8,7 +8,7 @@
+  */
+ 
+ #include <stdarg.h>
+-
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ #include "handbrake/hb_dict.h"
+ #include "handbrake/encx264.h"
+diff --git a/libhb/encx265.c b/libhb/encx265.c
+index d493cc3d5d5..fe4b59c5a19 100644
+--- a/libhb/encx265.c
++++ b/libhb/encx265.c
+@@ -11,6 +11,7 @@
+ 
+ #if HB_PROJECT_FEATURE_X265
+ 
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ #include "handbrake/hb_dict.h"
+ #include "handbrake/h265_common.h"
+diff --git a/libhb/platform/macosx/encvt.c b/libhb/platform/macosx/encvt.c
+index 72644e9afc9..168b21e1295 100644
+--- a/libhb/platform/macosx/encvt.c
++++ b/libhb/platform/macosx/encvt.c
+@@ -7,11 +7,12 @@
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
+ 
+-#include "handbrake/handbrake.h"
+-
+ #include <VideoToolbox/VideoToolbox.h>
+ #include <CoreMedia/CoreMedia.h>
+ #include <CoreVideo/CoreVideo.h>
++#include "libavutil/avutil.h"
++
++#include "handbrake/handbrake.h"
+ 
+ int  encvt_init(hb_work_object_t *, hb_job_t *);
+ int  encvt_work(hb_work_object_t *, hb_buffer_t **, hb_buffer_t **);
+diff --git a/libhb/reader.c b/libhb/reader.c
+index 90afbe3e2f3..f95e398ab62 100644
+--- a/libhb/reader.c
++++ b/libhb/reader.c
+@@ -6,6 +6,8 @@
+    It may be used under the terms of the GNU General Public License v2.
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
++
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ 
+ static int  reader_init( hb_work_object_t * w, hb_job_t * job );
+diff --git a/libhb/vfr.c b/libhb/vfr.c
+index 9c91e7d4e20..b3e33cf6a86 100644
+--- a/libhb/vfr.c
++++ b/libhb/vfr.c
+@@ -7,6 +7,7 @@
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
+ 
++#include "libavutil/avutil.h"
+ #include "handbrake/handbrake.h"
+ 
+ //#define HB_DEBUG_CFR_DROPS 1
