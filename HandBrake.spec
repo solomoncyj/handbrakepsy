@@ -166,6 +166,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %patch8 -p1
 %patch9 -p1
+%patch11 -p1
 
 mkdir -p download
 %{?_without_ffmpeg:cp -p %{SOURCE10} download}
