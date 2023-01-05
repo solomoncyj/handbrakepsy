@@ -1,6 +1,6 @@
 --- a/gtk/module.rules
 +++ b/gtk/module.rules
-@@ -21,6 +21,7 @@ $(GTK.CONFIGURE.stamp): $(GTK.src/)confi
+@@ -21,6 +21,7 @@ $(GTK.CONFIGURE.stamp): $(GTK.src/)configure.ac $(GTK.src/)src/Makefile.am
  		CXX="$(GCC.gxx)" \
  		CFLAGS="$(call fn.ARGS,GTK.GCC,.g .O *D *W ?extra)" \
  		LDFLAGS="$(call fn.ARGS,GTK.GCC,?strip .g .O ?extra.exe)" \

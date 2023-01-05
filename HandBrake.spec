@@ -1,5 +1,5 @@
-%global commit0 a8bc2549b3de632e2597cb133bc3aa20ca8a3629
-%global date 20210930
+%global commit0 9951c73a797b9c22814a1cfcbb0341d66853a262
+%global date 20221228
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -11,14 +11,14 @@
 
 %ifarch i686 x86_64
 %global _with_asm 1
-%global _with_mfx 1
+%global _with_vpl 1
 %endif
 
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.5.1
-Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.6.0
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            http://handbrake.fr/
@@ -34,35 +34,21 @@ BuildRequires:  gnupg2
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
 
-%{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
-
-# Build with unpatched libbluray (https://github.com/HandBrake/HandBrake/pull/458)
-# can be dropped with libbluray-1.0.0
-Patch1:         %{name}-no_clip_id.patch
 # Pass strip tool override to gtk/configure
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
-# Fix build on non-x86 (without nasm)
-Patch6:         %{name}-no-nasm.patch
-# rhel gettext is too old to support metainfo
-# https://github.com/HandBrake/HandBrake/pull/2884
-Patch7:         %{name}-no-metainfo.patch
 # Patch from Gentoo
-Patch8:         %{name}-ffmpeg-5.0.patch
 Patch9:         %{name}-x265-link.patch
-# keep using MediaSDK
-Patch10:        %{name}-no-libvpl.patch
-Patch11:        https://github.com/%{name}/%{name}/commit/7c92fda45573425fb3873b48919f9de2fb56c672.patch#/%{name}-ffmpeg-5.1.patch
+# https://github.com/HandBrake/HandBrake/commit/fa9e4bfd3a5be0b433d1a67cd4058d27fea9a061
+Patch11:        %{name}-fix-wformat.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
-BuildRequires:  cmake3
+BuildRequires:  cmake
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
-%if 0%{?fedora}
 BuildRequires:  libappstream-glib
-%endif
-%{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
+BuildRequires:  ffmpeg-devel >= 3.5
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
@@ -84,8 +70,9 @@ BuildRequires:  libdvdread-devel >= 5.0.0
 # FDK is non-free
 %{?_with_fdk:BuildRequires:  fdk-aac-devel >= 0.1.4}
 BuildRequires:  libgudev-devel
-%if 0%{?_with_mfx:1}
-BuildRequires:  libmfx-devel >= 1.23-1
+%if 0%{?_with_vpl:1}
+BuildRequires:  intel-mediasdk-devel
+BuildRequires:  oneVPL-devel
 BuildRequires:  libva-devel
 %endif
 BuildRequires:  libmpeg2-devel >= 0.5.1
@@ -99,16 +86,13 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  libvpx-devel >= 1.3
 BuildRequires:  make
 BuildRequires:  meson
-%if 0%{?_with_asm:1}
 BuildRequires:  nasm
-%endif
-%ifnarch %{arm}
 BuildRequires:  numactl-devel
-%endif
 BuildRequires:  nv-codec-headers
 BuildRequires:  opus-devel
 BuildRequires:  python3
 BuildRequires:  speex-devel
+BuildRequires:  svt-av1-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
 BuildRequires:  xz-devel
@@ -151,28 +135,15 @@ This package contains the main program with a graphical interface.
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
-%if 0%{?rhel}
-%patch1 -p1
-%endif
 %patch3 -p1
-%if 0%{!?_with_mfx}
+%if 0%{!?_with_vpl}
 %patch4 -p1
-%else
-%patch10 -p1
 %endif
-%patch6 -p1
-%if 0%{?rhel}
-%patch7 -p1
-%endif
-%patch8 -p1
 %patch9 -p1
 %patch11 -p1
 
-mkdir -p download
-%{?_without_ffmpeg:cp -p %{SOURCE10} download}
-
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_mfx:libmfx libvpl} nvenc libvpx x265; do
+for module in a52dec %{?_with_fdk:fdk-aac} ffmpeg libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
@@ -194,7 +165,7 @@ export http_proxy=http://127.0.0.1
 # By default the project is built with optimizations for speed and no debug.
 # Override configure settings by passing RPM_OPT_FLAGS and disabling preset
 # debug options.
-echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_fdk:-lfdk-aac} %{?_with_mfx:-lmfx}" > custom.defs
+echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_fdk:-lfdk-aac} %{?_with_vpl:-lmfx -lvpl}" > custom.defs
 echo "GCC.args.g.none = " >> custom.defs
 
 # Not an autotools configure script.
@@ -213,7 +184,7 @@ echo "GCC.args.g.none = " >> custom.defs
     --disable-numa \
 %endif
     %{?_with_fdk:--enable-fdk-aac} \
-    %{?_with_mfx:--enable-qsv}
+    %{?_with_vpl:--enable-qsv}
 
 %make_build -C build V=1
 
@@ -221,45 +192,25 @@ echo "GCC.args.g.none = " >> custom.defs
 %make_install -C build
 
 # Desktop file, icons and AppStream metadata from FlatPak build (more complete)
-rm -f %{buildroot}/%{_datadir}/applications/ghb.desktop \
-    %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps/hb-icon.svg
+rm -f %{buildroot}%{_datadir}/applications/ghb.desktop \
+    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/hb-icon.svg
 
 install -D -p -m 644 gtk/src/%{desktop_id}.desktop \
-    %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
+    %{buildroot}%{_datadir}/applications/%{desktop_id}.desktop
 install -D -p -m 644 gtk/src/%{desktop_id}.svg \
-    %{buildroot}/%{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
-
-desktop-file-validate %{buildroot}/%{_datadir}/applications/%{desktop_id}.desktop
-
-%if 0%{?fedora}
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.metainfo.xml
-%endif
+    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
 
 %find_lang ghb
 
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%post gui
-touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-/usr/bin/update-desktop-database &> /dev/null || :
-
-%postun gui
-if [ $1 -eq 0 ] ; then
-    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-/usr/bin/update-desktop-database &> /dev/null || :
-
-%posttrans gui
-gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-%endif
+%check
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{desktop_id}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.metainfo.xml
 
 %files -f ghb.lang gui
 %license COPYING
 %doc AUTHORS.markdown NEWS.markdown README.markdown THANKS.markdown
 %{_bindir}/ghb
-%if 0%{?fedora}
 %{_metainfodir}/%{desktop_id}.metainfo.xml
-%endif
 %{_datadir}/applications/%{desktop_id}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
 
@@ -269,6 +220,13 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Thu Jan 05 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.0-1
+- Updated to version 1.6.0.
+- Switched to intel-mediasdk-devel and oneVPL-devel as required by upstream.
+- Install metainfo manifest on EPEL too.
+- Removed the legacy scriptlets.
+- Added check section.
+
 * Sat Aug 06 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.5.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1
