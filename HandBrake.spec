@@ -21,7 +21,7 @@ Version:        1.6.0
 Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
-URL:            http://handbrake.fr/
+URL:            https://handbrake.fr/
 
 %if 0%{?tag:1}
 Source0:        https://github.com/%{name}/%{name}/releases/download/%{version}/%{name}-%{version}-source.tar.bz2
@@ -33,6 +33,8 @@ BuildRequires:  gnupg2
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
+
+%{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
 # Pass strip tool override to gtk/configure
 Patch3:         %{name}-nostrip.patch
@@ -48,7 +50,7 @@ BuildRequires:  cmake
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  libappstream-glib
-BuildRequires:  ffmpeg-devel >= 3.5
+%{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
@@ -105,6 +107,9 @@ Obsoletes:      HandBrake-cli < %{version}-%{release}
 Provides:       HandBrake-cli = %{version}-%{release}
 Provides:       handbrake =  %{version}-%{release}
 
+# svt-av1 is x86_64 only
+ExclusiveArch: x86_64
+
 %description
 %{name} is a general-purpose, free, open-source, cross-platform, multithreaded
 video transcoder software application. It can process most common multimedia
@@ -143,7 +148,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch11 -p1
 
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} ffmpeg libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
+for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
