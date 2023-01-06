@@ -18,7 +18,7 @@
 
 Name:           HandBrake
 Version:        1.6.0
-Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -29,6 +29,8 @@ Source1:        https://github.com/%{name}/%{name}/releases/download/%{version}/
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
+# Fix build on non-x86 (without nasm)
+Patch6:         %{name}-no-nasm.patch
 BuildRequires:  gnupg2
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
@@ -88,7 +90,9 @@ BuildRequires:  libvorbis-devel
 BuildRequires:  libvpx-devel >= 1.3
 BuildRequires:  make
 BuildRequires:  meson
+%if 0%{?_with_asm:1}
 BuildRequires:  nasm
+%endif
 BuildRequires:  numactl-devel
 BuildRequires:  nv-codec-headers
 BuildRequires:  opus-devel
@@ -106,9 +110,6 @@ Requires:       hicolor-icon-theme
 Obsoletes:      HandBrake-cli < %{version}-%{release}
 Provides:       HandBrake-cli = %{version}-%{release}
 Provides:       handbrake =  %{version}-%{release}
-
-# svt-av1 is x86_64 only
-ExclusiveArch: x86_64
 
 %description
 %{name} is a general-purpose, free, open-source, cross-platform, multithreaded
@@ -144,6 +145,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{!?_with_vpl}
 %patch4 -p1
 %endif
+%patch6 -p1
 %patch9 -p1
 %patch11 -p1
 
@@ -185,9 +187,7 @@ echo "GCC.args.g.none = " >> custom.defs
     --disable-gtk-update-checks \
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
-%ifarch %{arm}
     --disable-numa \
-%endif
     %{?_with_fdk:--enable-fdk-aac} \
     %{?_with_vpl:--enable-qsv}
 
@@ -225,6 +225,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Fri Jan 06 2023 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.0-2
+- restore building on non-x86_64 (see https://bugzilla.redhat.com/show_bug.cgi?id=2158920)
+
 * Thu Jan 05 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.0-1
 - Updated to version 1.6.0.
 - Switched to intel-mediasdk-devel and oneVPL-devel as required by upstream.
