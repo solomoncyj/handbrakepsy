@@ -4,9 +4,7 @@
 %global tag %{version}
 
 # Build with "--without ffmpeg" or enable this to use bundled libAV
-# instead of system FFMpeg libraries. Unfortunately with FFMpeg UTF-8
-# subtitles are not recognized in media source files. :(
-# https://trac.ffmpeg.org/ticket/6304
+# instead of system FFMpeg libraries.
 #global _without_ffmpeg 1
 
 %ifarch i686 x86_64
