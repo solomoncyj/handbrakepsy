@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.6.0
-Release:        2%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -40,6 +40,8 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 Patch3:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
 Patch4:         %{name}-no-libva.patch
+# Don't link with fdk_aac unnecessarily
+Patch5:         %{name}-no-fdk_aac.patch
 # Patch from Gentoo
 Patch9:         %{name}-x265-link.patch
 # https://github.com/HandBrake/HandBrake/commit/fa9e4bfd3a5be0b433d1a67cd4058d27fea9a061
@@ -69,8 +71,6 @@ BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libdvdnav-devel >= 5.0.1
 BuildRequires:  libdvdread-devel >= 5.0.0
-# FDK is non-free
-%{?_with_fdk:BuildRequires:  fdk-aac-devel >= 0.1.4}
 BuildRequires:  libgudev-devel
 %if 0%{?_with_vpl:1}
 BuildRequires:  intel-mediasdk-devel
@@ -143,12 +143,13 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %if 0%{!?_with_vpl}
 %patch4 -p1
 %endif
+%patch5 -p1
 %patch6 -p1
 %patch9 -p1
 %patch11 -p1
 
 # Use system libraries in place of bundled ones
-for module in a52dec %{?_with_fdk:fdk-aac} %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
+for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
@@ -170,7 +171,7 @@ export http_proxy=http://127.0.0.1
 # By default the project is built with optimizations for speed and no debug.
 # Override configure settings by passing RPM_OPT_FLAGS and disabling preset
 # debug options.
-echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_fdk:-lfdk-aac} %{?_with_vpl:-lvpl}" > custom.defs
+echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_vpl:-lvpl}" > custom.defs
 echo "GCC.args.g.none = " >> custom.defs
 
 # Not an autotools configure script.
@@ -186,7 +187,7 @@ echo "GCC.args.g.none = " >> custom.defs
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
     --disable-numa \
-    %{?_with_fdk:--enable-fdk-aac} \
+    --enable-fdk-aac \
     %{?_with_vpl:--enable-qsv}
 
 %make_build -C build V=1
@@ -223,6 +224,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Mon Jan 23 2023 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.0-3
+- enable FDK-AAC "support" (no direct build-time or runtime dependency,
+  works if system FFmpeg supports it)
+
 * Fri Jan 06 2023 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.0-2
 - restore building on non-x86_64 (see https://bugzilla.redhat.com/show_bug.cgi?id=2158920)
 
