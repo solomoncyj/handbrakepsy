@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.6.0
-Release:        3%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -171,7 +171,7 @@ export http_proxy=http://127.0.0.1
 # By default the project is built with optimizations for speed and no debug.
 # Override configure settings by passing RPM_OPT_FLAGS and disabling preset
 # debug options.
-echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_vpl:-lvpl}" > custom.defs
+echo "GCC.args.O.speed = %{optflags} -I%{_includedir}/vpl -I%{_includedir}/ffmpeg -ldl -lx265 %{?_with_vpl:-lvpl}" > custom.defs
 echo "GCC.args.g.none = " >> custom.defs
 
 # Not an autotools configure script.
@@ -224,6 +224,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed Mar 01 2023 Leigh Scott <leigh123linux@gmail.com> - 1.6.0-4
+- Rebuild for new ffmpeg
+
 * Mon Jan 23 2023 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.0-3
 - enable FDK-AAC "support" (no direct build-time or runtime dependency,
   works if system FFmpeg supports it)
