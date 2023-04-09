@@ -1,5 +1,5 @@
-%global commit0 9951c73a797b9c22814a1cfcbb0341d66853a262
-%global date 20221228
+%global commit0 04413a27e6d616cddd98c2c6468aca2bf91b87b5
+%global date 20230122
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -15,8 +15,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.6.0
-Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.6.1
+Release:        1%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -27,9 +27,7 @@ Source1:        https://github.com/%{name}/%{name}/releases/download/%{version}/
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
-# Fix build on non-x86 (without nasm)
-Patch6:         %{name}-no-nasm.patch
-BuildRequires:  gnupg2
+
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
@@ -37,20 +35,21 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 %{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
 # Pass strip tool override to gtk/configure
-Patch3:         %{name}-nostrip.patch
+Patch0:         %{name}-nostrip.patch
 # Don't link with libva unnecessarily
-Patch4:         %{name}-no-libva.patch
+Patch1:         %{name}-no-libva.patch
 # Don't link with fdk_aac unnecessarily
-Patch5:         %{name}-no-fdk_aac.patch
+Patch2:         %{name}-no-fdk_aac.patch
+# Fix build on non-x86 (without nasm)
+Patch3:         %{name}-no-nasm.patch
 # Patch from Gentoo
-Patch9:         %{name}-x265-link.patch
-# https://github.com/HandBrake/HandBrake/commit/fa9e4bfd3a5be0b433d1a67cd4058d27fea9a061
-Patch11:        %{name}-fix-wformat.patch
+Patch4:         %{name}-x265-link.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
+BuildRequires:  gnupg2
 BuildRequires:  libappstream-glib
 %{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
 # Should be >= 2.6:
@@ -139,14 +138,13 @@ This package contains the main program with a graphical interface.
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
-%patch3 -p1
+%patch -P0 -p1
 %if 0%{!?_with_vpl}
-%patch4 -p1
+%patch -P1 -p1
 %endif
-%patch5 -p1
-%patch6 -p1
-%patch9 -p1
-%patch11 -p1
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
 
 # Use system libraries in place of bundled ones
 for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
@@ -224,6 +222,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Apr 09 2023 Leigh Scott <leigh123linux@gmail.com> - 1.6.1-1
+- Updated to version 1.6.1.
+
 * Wed Mar 01 2023 Leigh Scott <leigh123linux@gmail.com> - 1.6.0-4
 - Rebuild for new ffmpeg
 
