@@ -27,7 +27,6 @@ Source1:        https://github.com/%{name}/%{name}/releases/download/%{version}/
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
-
 %else
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
@@ -49,7 +48,9 @@ BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
 BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
+%if 0%{?tag:1}
 BuildRequires:  gnupg2
+%endif
 BuildRequires:  libappstream-glib
 %{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
 # Should be >= 2.6:
