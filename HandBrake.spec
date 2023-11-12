@@ -43,6 +43,7 @@ Patch2:         %{name}-no-fdk_aac.patch
 Patch3:         %{name}-no-nasm.patch
 # Patch from Gentoo
 Patch4:         %{name}-x265-link.patch
+Patch5:         add_time_include.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -146,6 +147,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P4 -p1
+%patch -P5 -p1
 
 # Use system libraries in place of bundled ones
 for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do

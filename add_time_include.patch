@@ -1,0 +1,24 @@
+diff --git a/libhb/muxavformat.c b/libhb/muxavformat.c
+index 929e0dd0cfe9..f1032bd9f841 100644
+--- a/libhb/muxavformat.c
++++ b/libhb/muxavformat.c
+@@ -7,6 +7,7 @@
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
+ 
++#include <time.h>
+ #include <ogg/ogg.h>
+ #include "libavcodec/bsf.h"
+ #include "libavformat/avformat.h"
+diff --git a/libhb/work.c b/libhb/work.c
+index 3c4dee193bf5..9bf128bdbc73 100644
+--- a/libhb/work.c
++++ b/libhb/work.c
+@@ -7,6 +7,7 @@
+    For full terms see the file COPYING file or visit http://www.gnu.org/licenses/gpl-2.0.html
+  */
+ 
++#include <time.h>
+ #include "handbrake/handbrake.h"
+ #include "libavformat/avformat.h"
+ #include "handbrake/decomb.h"
