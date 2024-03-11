@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.6.1
-Release:        4%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        5%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -43,7 +43,8 @@ Patch2:         %{name}-no-fdk_aac.patch
 Patch3:         %{name}-no-nasm.patch
 # Patch from Gentoo
 Patch4:         %{name}-x265-link.patch
-Patch5:         add_time_include.patch
+# Fix build with GCC14
+Patch5:         %{name}-modern-c.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -225,6 +226,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Mon Mar 11 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.1-5
+- Fix build with GCC14
+
 * Sat Feb 03 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.6.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
 
