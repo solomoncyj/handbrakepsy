@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.6.1
-Release:        5%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Release:        6%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -226,6 +226,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Apr 06 2024 Leigh Scott <leigh123linux@gmail.com> - 1.6.1-6
+- Rebuild for new x265 version
+
 * Mon Mar 11 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.6.1-5
 - Fix build with GCC14
 
