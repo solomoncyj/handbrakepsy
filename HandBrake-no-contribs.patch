@@ -1,0 +1,65 @@
+From: Sebastian Ramacher <sramacher@debian.org>
+Date: Fri, 1 Dec 2023 23:22:16 +0100
+Subject: Do not use contribs
+
+---
+ gtk/meson.build | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/gtk/meson.build b/gtk/meson.build
+index 6f41201..c072f50 100644
+--- a/gtk/meson.build
++++ b/gtk/meson.build
+@@ -22,8 +22,8 @@ if hb_dir == ''
+   hb_dir = meson.current_build_dir() / '..'
+ endif
+ 
+-hb_libdirs = [hb_dir / 'libhb', hb_dir / 'contrib/lib'] + get_option('extra-libdirs')
+-hb_incdirs = include_directories(hb_dir / 'libhb', hb_dir / 'contrib/include')
++hb_libdirs = [hb_dir / 'libhb'] + get_option('extra-libdirs')
++hb_incdirs = include_directories(hb_dir / 'libhb')
+ 
+ # External dependencies (required)
+ ghb_deps = [
+@@ -33,7 +33,6 @@ ghb_deps = [
+   cc.find_library('mp3lame', dirs: hb_libdirs),
+   dependency('dvdnav'),
+   dependency('dvdread'),
+-  dependency('dav1d'),
+   dependency('SvtAv1Enc'),
+   dependency('fribidi'),
+   dependency('glib-2.0', version: glib_min),
+@@ -63,7 +62,6 @@ ghb_deps = [
+   dependency('vorbisenc'),
+   dependency('vpx'),
+   dependency('x264'),
+-  dependency('zimg'),
+   dependency('zlib'),
+ ]
+ 
+diff -up HandBrake-1.7.3/libhb/module.defs.orig HandBrake-1.7.3/libhb/module.defs
+--- HandBrake-1.7.3/libhb/module.defs.orig	2024-02-10 23:22:33.000000000 +0100
++++ HandBrake-1.7.3/libhb/module.defs	2024-05-15 23:46:57.265752588 +0200
+@@ -1,7 +1,7 @@
+ __deps__ := A52DEC BZIP2 LIBVPX SVT-AV1 FFMPEG FREETYPE LAME LIBASS LIBDCA \
+     LIBDVDREAD LIBDVDNAV LIBICONV LIBSAMPLERATE LIBTHEORA LIBVORBIS LIBOGG \
+     LIBXML2 X264 X265 ZLIB LIBBLURAY FDKAAC LIBVPL LIBGNURX JANSSON \
+-    HARFBUZZ LIBOPUS LIBSPEEX LIBDAV1D LIBJPEGTURBO LIBDOVI
++    HARFBUZZ LIBOPUS LIBSPEEX LIBJPEGTURBO LIBDOVI
+ 
+ ifeq (,$(filter $(HOST.system),darwin cygwin mingw))
+     __deps__ += FONTCONFIG
+diff -up HandBrake-1.7.3/test/module.defs.orig HandBrake-1.7.3/test/module.defs
+--- HandBrake-1.7.3/test/module.defs.orig	2024-05-15 23:05:14.263979341 +0200
++++ HandBrake-1.7.3/test/module.defs	2024-05-15 23:47:36.829590760 +0200
+@@ -16,8 +16,8 @@ TEST.libs = $(LIBHB.a)
+ TEST.GCC.l = \
+         ass avformat avfilter avcodec avutil swresample postproc mp3lame dvdnav \
+         dvdread fribidi swscale vpx theoraenc theoradec vorbis vorbisenc ogg \
+-        x264 bluray freetype xml2 bz2 z jansson harfbuzz opus speex lzma dav1d \
+-        turbojpeg zimg SvtAv1Enc
++        x264 bluray freetype xml2 bz2 z jansson harfbuzz opus speex lzma \
++        turbojpeg SvtAv1Enc
+ 
+ ifeq (,$(filter $(HOST.system),darwin cygwin mingw))
+     TEST.GCC.l += fontconfig

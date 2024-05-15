@@ -1,14 +1,45 @@
-diff -up HandBrake-1.6.0/gtk/configure.ac.fdk HandBrake-1.6.0/gtk/configure.ac
---- HandBrake-1.6.0/gtk/configure.ac.fdk	2022-12-28 09:43:46.000000000 +0100
-+++ HandBrake-1.6.0/gtk/configure.ac	2023-01-23 20:50:40.075455676 +0100
-@@ -215,10 +215,6 @@ else
- 	HB_LIBS="$HB_LIBS -lx264"
- fi
+diff -up HandBrake-1.7.3/gtk/meson.build.orig HandBrake-1.7.3/gtk/meson.build
+--- HandBrake-1.7.3/gtk/meson.build.orig	2024-02-10 23:22:33.000000000 +0100
++++ HandBrake-1.7.3/gtk/meson.build	2024-05-15 22:54:38.645589239 +0200
+@@ -90,10 +90,6 @@ if get_option('libdovi').enabled()
+   ghb_deps += dependency('dovi')
+ endif
  
--if test "x$use_fdk_aac" = "xyes" ; then
--	HB_LIBS="$HB_LIBS -lfdk-aac"
--fi
+-if get_option('fdk-aac').enabled()
+-  ghb_deps += dependency('fdk-aac')
+-endif
 -
- if test "x$use_x265" = "xyes" ; then
- 	HB_LIBS="$HB_LIBS -lx265"
- fi
+ if get_option('qsv').enabled()
+   if host_machine.system() == 'windows'
+     ghb_deps += cc.find_library('vpl', dirs: hb_libdirs)
+diff -up HandBrake-1.7.3/gtk/meson_options.txt.orig HandBrake-1.7.3/gtk/meson_options.txt
+--- HandBrake-1.7.3/gtk/meson_options.txt.orig	2024-02-10 23:22:33.000000000 +0100
++++ HandBrake-1.7.3/gtk/meson_options.txt	2024-05-15 22:54:45.430561239 +0200
+@@ -3,11 +3,6 @@ option('extra-libdirs',
+        value: [],
+        description: 'Extra directories to search for libraries')
+ 
+-option('fdk-aac',
+-       type: 'feature',
+-       value: 'disabled',
+-       description: 'Enable FDK AAC encoder')
+-
+ option('flatpak',
+        type: 'boolean',
+        value: false,
+diff -up HandBrake-1.7.3/gtk/module.defs.orig HandBrake-1.7.3/gtk/module.defs
+--- HandBrake-1.7.3/gtk/module.defs.orig	2024-02-10 23:22:33.000000000 +0100
++++ HandBrake-1.7.3/gtk/module.defs	2024-05-15 22:54:53.795526719 +0200
+@@ -53,12 +53,6 @@ else
+     GTK.CONFIGURE.extra += -Dgstreamer=disabled
+ endif
+ 
+-ifeq (1,$(FEATURE.fdk_aac))
+-    GTK.CONFIGURE.extra += -Dfdk-aac=enabled
+-else
+-    GTK.CONFIGURE.extra += -Dfdk-aac=disabled
+-endif
+-
+ ifeq (1,$(FEATURE.x265))
+     GTK.CONFIGURE.extra += -Dx265=enabled
+ else

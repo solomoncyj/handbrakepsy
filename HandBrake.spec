@@ -1,5 +1,5 @@
-%global commit0 04413a27e6d616cddd98c2c6468aca2bf91b87b5
-%global date 20230122
+%global commit0 86156a66c0d5ccc306487c1ff961a7b2328961b3
+%global date 20240210
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -15,8 +15,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.6.1
-Release:        6%{!?tag:.%{date}git%{shortcommit0}}%{?dist}
+Version:        1.7.3
+Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -33,18 +33,21 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 
 %{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
-# Pass strip tool override to gtk/configure
-Patch0:         %{name}-nostrip.patch
+# Fix parsing of -DFOO from pkg-config --cflags libxml-2.0
+Patch0:         %{name}-fix-cflags-parsing.patch
 # Don't link with libva unnecessarily
 Patch1:         %{name}-no-libva.patch
 # Don't link with fdk_aac unnecessarily
 Patch2:         %{name}-no-fdk_aac.patch
-# Fix build on non-x86 (without nasm)
-Patch3:         %{name}-no-nasm.patch
+# Fix build on non-x86 (without nasm) and drop libtool requirement
+Patch3:         %{name}-no-libtool-nasm.patch
 # Patch from Gentoo
 Patch4:         %{name}-x265-link.patch
-# Fix build with GCC14
-Patch5:         %{name}-modern-c.patch
+# Patches from Debian
+# https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0004-Do-not-use-contribs.patch
+Patch5:         %{name}-no-contribs.patch
+# https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0003-Remove-ambient-viewing-support.patch
+Patch6:         %{name}-remove-ambient-viewing-support.patch
 
 BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
@@ -69,7 +72,6 @@ BuildRequires:  libappindicator-gtk3-devel
 # Should be >= 0.13.2:
 BuildRequires:  libass-devel >= 0.13.1
 BuildRequires:  libbluray-devel >= 0.9.3
-BuildRequires:  libdav1d-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  libdvdnav-devel >= 5.0.1
 BuildRequires:  libdvdread-devel >= 5.0.0
@@ -84,7 +86,6 @@ BuildRequires:  libnotify-devel
 BuildRequires:  librsvg2-devel
 BuildRequires:  libsamplerate-devel
 BuildRequires:  libtheora-devel
-BuildRequires:  libtool
 BuildRequires:  libvorbis-devel
 # Should be >= 1.5:
 BuildRequires:  libvpx-devel >= 1.3
@@ -102,7 +103,6 @@ BuildRequires:  svt-av1-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
 BuildRequires:  xz-devel
-BuildRequires:  zimg-devel
 
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
@@ -149,14 +149,12 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P3 -p1
 %patch -P4 -p1
 %patch -P5 -p1
+%patch -P6 -p1
 
 # Use system libraries in place of bundled ones
-for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdav1d libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
+for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
-
-# Fix desktop file
-sed -i -e 's/%{desktop_id}.svg/%{desktop_id}/g' gtk/src/%{desktop_id}.desktop
 
 %build
 echo "HASH=%{commit0}" > version.txt
@@ -166,6 +164,7 @@ echo "DATE=$(date "+%Y-%m-%d %T" -d %{date})" >> version.txt
 echo "TAG=%{tag}" >> version.txt
 echo "TAG_HASH=%{commit0}" >> version.txt
 %endif
+sed -i -e 's/^\(GIT_TAG\)=\(.*\)/\1=%{version}/' gtk/data/version.sh
 
 # This makes build stop if any download is attempted
 export http_proxy=http://127.0.0.1
@@ -185,7 +184,6 @@ echo "GCC.args.g.none = " >> custom.defs
     --verbose \
     --disable-df-fetch \
     --disable-df-verify \
-    --disable-gtk-update-checks \
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
     --disable-numa \
@@ -196,15 +194,6 @@ echo "GCC.args.g.none = " >> custom.defs
 
 %install
 %make_install -C build
-
-# Desktop file, icons and AppStream metadata from FlatPak build (more complete)
-rm -f %{buildroot}%{_datadir}/applications/ghb.desktop \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/hb-icon.svg
-
-install -D -p -m 644 gtk/src/%{desktop_id}.desktop \
-    %{buildroot}%{_datadir}/applications/%{desktop_id}.desktop
-install -D -p -m 644 gtk/src/%{desktop_id}.svg \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{desktop_id}.svg
 
 %find_lang ghb
 
@@ -226,6 +215,13 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Wed May 15 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.7.3-1
+- Update to version 1.7.3.
+- Drop obsolete patches
+- Fix build with system FFmpeg/x265
+- Drop unused dependencies
+- Fix libxml2 cflags parsing
+
 * Sat Apr 06 2024 Leigh Scott <leigh123linux@gmail.com> - 1.6.1-6
 - Rebuild for new x265 version
 
