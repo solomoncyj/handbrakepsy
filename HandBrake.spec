@@ -16,7 +16,7 @@
 
 Name:           HandBrake
 Version:        1.7.3
-Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -215,6 +215,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Jun 01 2024 Robert-André Mauchin <zebob.m@gmail.com> - 1.7.3-2
+- Rebuild for svt-av1 2.1.0
+
 * Wed May 15 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.7.3-1
 - Update to version 1.7.3.
 - Drop obsolete patches
