@@ -133,7 +133,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P6 -p1
 
 # Use system libraries in place of bundled ones
-for module in fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvenc svt-av1 x265; do
+for module in fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
@@ -166,6 +166,8 @@ echo "GCC.args.g.none = " >> custom.defs
     --disable-df-verify \
     %{?_with_asm:--enable-asm} \
     --enable-x265 \
+    --enable-nvdec \
+    --enable-nvenc \
     --disable-numa \
     --enable-fdk-aac \
     %{?_with_vpl:--enable-qsv}
@@ -200,6 +202,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 - Drop obsolete patch
 - Fix linking with system libraries
 - Drop unused build dependencies
+- Enable nvdec
 
 * Sat Jun 01 2024 Robert-André Mauchin <zebob.m@gmail.com> - 1.7.3-2
 - Rebuild for svt-av1 2.1.0
