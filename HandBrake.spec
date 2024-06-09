@@ -15,8 +15,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.7.3
-Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Version:        1.8.0
+Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -33,16 +33,14 @@ Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{
 
 %{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
 
-# Fix parsing of -DFOO from pkg-config --cflags libxml-2.0
-Patch0:         %{name}-fix-cflags-parsing.patch
 # Don't link with libva unnecessarily
 Patch1:         %{name}-no-libva.patch
 # Don't link with fdk_aac unnecessarily
 Patch2:         %{name}-no-fdk_aac.patch
 # Fix build on non-x86 (without nasm) and drop libtool requirement
 Patch3:         %{name}-no-libtool-nasm.patch
-# Patch from Gentoo
-Patch4:         %{name}-x265-link.patch
+# Fix linking with system libraries
+Patch4:         %{name}-syslibs-link.patch
 # Patches from Debian
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0004-Do-not-use-contribs.patch
 Patch5:         %{name}-no-contribs.patch
@@ -64,6 +62,7 @@ BuildRequires:  freetype-devel >= 2.4.11
 BuildRequires:  fribidi-devel >= 0.19.4
 BuildRequires:  gcc-c++
 BuildRequires:  gstreamer1-plugins-base-devel
+BuildRequires:  gtk4-devel
 BuildRequires:  intltool
 BuildRequires:  jansson-devel
 BuildRequires:  turbojpeg-devel
@@ -141,7 +140,6 @@ This package contains the main program with a graphical interface.
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
 %setup -q %{!?tag:-n %{name}-%{commit0}}
-%patch -P0 -p1
 %if 0%{!?_with_vpl}
 %patch -P1 -p1
 %endif
@@ -164,7 +162,6 @@ echo "DATE=$(date "+%Y-%m-%d %T" -d %{date})" >> version.txt
 echo "TAG=%{tag}" >> version.txt
 echo "TAG_HASH=%{commit0}" >> version.txt
 %endif
-sed -i -e 's/^\(GIT_TAG\)=\(.*\)/\1=%{version}/' gtk/data/version.sh
 
 # This makes build stop if any download is attempted
 export http_proxy=http://127.0.0.1
@@ -215,6 +212,11 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Jun 08 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.0-1
+- Update to 1.8.0
+- Drop obsolete patch
+- Fix linking with system libraries
+
 * Sat Jun 01 2024 Robert-André Mauchin <zebob.m@gmail.com> - 1.7.3-2
 - Rebuild for svt-av1 2.1.0
 

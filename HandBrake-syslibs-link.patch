@@ -1,0 +1,30 @@
+diff -up HandBrake-1.8.0/test/module.defs.orig HandBrake-1.8.0/test/module.defs
+--- HandBrake-1.8.0/test/module.defs.orig	2024-05-19 16:06:45.000000000 +0200
++++ HandBrake-1.8.0/test/module.defs	2024-06-09 12:44:44.012169393 +0200
+@@ -22,6 +22,14 @@ TEST.pkgconfig_libs = libass libavformat
+ 
+ TEST.pkgconfig_libs += $(foreach m,$(MODULES.NAMES),$($m.OSL.libs))
+ 
++ifeq (1,$(FEATURE.qsv))
++    TEST.pkgconfig_libs += libva libva-drm vpl
++endif
++
++ifeq (1,$(FEATURE.x265))
++    TEST.pkgconfig_libs += x265
++endif
++
+ ifeq (1,$(FEATURE.flatpak))
+     TEST.pkgconfig_libs += glib-2.0
+ endif
+diff -up HandBrake-1.8.0/gtk/meson.build.orig HandBrake-1.8.0/gtk/meson.build
+--- HandBrake-1.8.0/gtk/meson.build.orig	2024-06-09 12:48:47.938685823 +0200
++++ HandBrake-1.8.0/gtk/meson.build	2024-06-09 12:52:51.685218843 +0200
+@@ -58,6 +58,8 @@ if get_option('libdovi').enabled()
+ endif
+ 
+ if get_option('qsv').enabled()
++  ghb_deps += dependency('libva')
++  ghb_deps += dependency('libva-drm')
+   ghb_deps += dependency('vpl')
+ endif
+ 
