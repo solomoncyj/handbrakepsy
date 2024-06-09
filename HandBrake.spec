@@ -47,9 +47,7 @@ Patch5:         %{name}-no-contribs.patch
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0003-Remove-ambient-viewing-support.patch
 Patch6:         %{name}-remove-ambient-viewing-support.patch
 
-BuildRequires:  a52dec-devel >= 0.7.4
 BuildRequires:  cmake
-BuildRequires:  dbus-glib-devel
 BuildRequires:  desktop-file-utils
 %if 0%{?tag:1}
 BuildRequires:  gnupg2
@@ -61,47 +59,32 @@ BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
 BuildRequires:  fribidi-devel >= 0.19.4
 BuildRequires:  gcc-c++
-BuildRequires:  gstreamer1-plugins-base-devel
 BuildRequires:  gtk4-devel
-BuildRequires:  intltool
 BuildRequires:  jansson-devel
 BuildRequires:  turbojpeg-devel
-BuildRequires:  lame-devel >= 3.98
-BuildRequires:  libappindicator-gtk3-devel
 # Should be >= 0.13.2:
 BuildRequires:  libass-devel >= 0.13.1
 BuildRequires:  libbluray-devel >= 0.9.3
 BuildRequires:  libdrm-devel
 BuildRequires:  libdvdnav-devel >= 5.0.1
 BuildRequires:  libdvdread-devel >= 5.0.0
-BuildRequires:  libgudev-devel
 %if 0%{?_with_vpl:1}
-BuildRequires:  intel-mediasdk-devel
 BuildRequires:  oneVPL-devel
 BuildRequires:  libva-devel
 %endif
-BuildRequires:  libmpeg2-devel >= 0.5.1
-BuildRequires:  libnotify-devel
-BuildRequires:  librsvg2-devel
 BuildRequires:  libsamplerate-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
-# Should be >= 1.5:
-BuildRequires:  libvpx-devel >= 1.3
 BuildRequires:  make
 BuildRequires:  meson
 %if 0%{?_with_asm:1}
 BuildRequires:  nasm
 %endif
-BuildRequires:  numactl-devel
 BuildRequires:  nv-codec-headers
-BuildRequires:  opus-devel
 BuildRequires:  python3
-BuildRequires:  speex-devel
 BuildRequires:  svt-av1-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
-BuildRequires:  xz-devel
 
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
@@ -150,7 +133,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P6 -p1
 
 # Use system libraries in place of bundled ones
-for module in a52dec fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libmfx libvpl} nvenc libvpx svt-av1 x265; do
+for module in fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvenc svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
@@ -216,6 +199,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 - Update to 1.8.0
 - Drop obsolete patch
 - Fix linking with system libraries
+- Drop unused build dependencies
 
 * Sat Jun 01 2024 Robert-André Mauchin <zebob.m@gmail.com> - 1.7.3-2
 - Rebuild for svt-av1 2.1.0
