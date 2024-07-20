@@ -1,5 +1,5 @@
-%global commit0 86156a66c0d5ccc306487c1ff961a7b2328961b3
-%global date 20240210
+%global commit0 e9ff2bdf1ac670eb9c6d6170e27c999c05535127
+%global date 20240621
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
@@ -15,7 +15,7 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.8.0
+Version:        1.8.1
 Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
@@ -197,6 +197,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sat Jul 20 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.1-1
+- Update to 1.8.1
+
 * Sat Jun 08 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.0-1
 - Update to 1.8.0
 - Drop obsolete patch
