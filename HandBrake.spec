@@ -15,8 +15,8 @@
 %global desktop_id fr.handbrake.ghb
 
 Name:           HandBrake
-Version:        1.8.1
-Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Version:        1.8.2
+Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -197,6 +197,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Aug 18 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.2-1
+- Update to 1.8.2
+
 * Thu Aug 01 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.8.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
