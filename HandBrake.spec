@@ -3,10 +3,6 @@
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global tag %{version}
 
-# Build with "--without ffmpeg" or enable this to use bundled libAV
-# instead of system FFMpeg libraries.
-#global _without_ffmpeg 1
-
 %ifarch i686 x86_64
 %global _with_asm 1
 %global _with_vpl 1
@@ -31,8 +27,6 @@ Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
 %endif
 
-%{?_without_ffmpeg:Source10:       https://libav.org/releases/libav-12.tar.gz}
-
 # Don't link with libva unnecessarily
 Patch1:         %{name}-no-libva.patch
 # Don't link with fdk_aac unnecessarily
@@ -53,7 +47,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  gnupg2
 %endif
 BuildRequires:  libappstream-glib
-%{!?_without_ffmpeg:BuildRequires:  ffmpeg-devel >= 3.5}
+BuildRequires:  ffmpeg-devel
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
@@ -133,7 +127,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P6 -p1
 
 # Use system libraries in place of bundled ones
-for module in fdk-aac %{!?_without_ffmpeg:ffmpeg} libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
+for module in fdk-aac ffmpeg libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
     sed -i -e "/MODULES += contrib\/$module/d" make/include/main.defs
 done
 
