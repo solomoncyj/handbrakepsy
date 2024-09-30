@@ -12,7 +12,7 @@
 
 Name:           HandBrake
 Version:        1.8.2
-Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -40,6 +40,8 @@ Patch4:         %{name}-syslibs-link.patch
 Patch5:         %{name}-no-contribs.patch
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0003-Remove-ambient-viewing-support.patch
 Patch6:         %{name}-remove-ambient-viewing-support.patch
+# https://github.com/HandBrake/HandBrake/commit/65ec04667e69918401a0af77948f0cd0930c2789
+Patch7:         %{name}-x265-v4.patch
 
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
@@ -125,6 +127,9 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P4 -p1
 %patch -P5 -p1
 %patch -P6 -p1
+%if 0%{?fedora} > 41
+%patch -P7 -p1
+%endif
 
 # Use system libraries in place of bundled ones
 for module in fdk-aac ffmpeg libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
@@ -191,6 +196,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Mon Sep 30 2024 Leigh Scott <leigh123linux@gmail.com> - 1.8.2-2
+- Rebuild for x265
+
 * Sun Aug 18 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.2-1
 - Update to 1.8.2
 
