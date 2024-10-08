@@ -12,7 +12,7 @@
 
 Name:           HandBrake
 Version:        1.8.2
-Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Release:        3%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -196,6 +196,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Tue Oct 08 2024 Dominik Mierzejewski <dominik@greysector.net> - 1.8.2-3
+- bump to rebuild
+
 * Sun Sep 01 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.2-2
 - bump FFmpeg requirement to 7.0
 - sync patches from Debian
