@@ -1,6 +1,15 @@
-diff -up HandBrake-1.8.0/gtk/meson.build.orig HandBrake-1.8.0/gtk/meson.build
---- HandBrake-1.8.0/gtk/meson.build.orig	2024-06-08 23:25:36.847621713 +0200
-+++ HandBrake-1.8.0/gtk/meson.build	2024-06-09 10:47:41.354428601 +0200
+From: Sebastian Ramacher <sramacher@debian.org>
+Date: Fri, 1 Dec 2023 23:22:16 +0100
+Subject: Do not use contribs
+
+---
+ gtk/meson.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gtk/meson.build b/gtk/meson.build
+index 96ba523..6b82ced 100644
+--- a/gtk/meson.build
++++ b/gtk/meson.build
 @@ -20,7 +20,7 @@ if hb_dir == ''
    hb_dir = meson.current_build_dir() / '..'
  endif
@@ -10,37 +19,11 @@ diff -up HandBrake-1.8.0/gtk/meson.build.orig HandBrake-1.8.0/gtk/meson.build
  
  # External dependencies (required)
  ghb_deps = [
-diff -up HandBrake-1.8.0/libhb/module.defs.orig HandBrake-1.8.0/libhb/module.defs
---- HandBrake-1.8.0/libhb/module.defs.orig	2024-05-19 16:06:45.000000000 +0200
-+++ HandBrake-1.8.0/libhb/module.defs	2024-06-09 10:51:03.886266133 +0200
-@@ -1,7 +1,7 @@
- __deps__ := BZIP2 LIBVPX SVT-AV1 FFMPEG FREETYPE LAME LIBASS \
-     LIBDVDREAD LIBDVDNAV LIBICONV LIBTHEORA LIBVORBIS LIBOGG \
-     X264 X265 ZLIB LIBBLURAY FDKAAC LIBVPL LIBGNURX JANSSON \
--    HARFBUZZ LIBOPUS LIBSPEEX LIBDAV1D LIBJPEGTURBO LIBDOVI
-+    HARFBUZZ LIBOPUS LIBSPEEX LIBJPEGTURBO LIBDOVI
+@@ -51,6 +51,7 @@ ghb_deps = [
+   dependency('vorbis'),
+   dependency('vorbisenc'),
+   dependency('x264'),
++  dependency('zlib'),
+ ]
  
- ifeq (,$(filter $(HOST.system),darwin cygwin mingw))
-     __deps__ += FONTCONFIG
-@@ -118,7 +118,7 @@ LIBHB.lib = $(LIBHB.build/)hb.lib
- LIBHB.dll.libs = $(foreach n, \
-         ass avformat avfilter avcodec avutil swresample dvdnav dvdread \
-         freetype mp3lame swscale vpx theora vorbis vorbisenc ogg x264 \
--        bluray jansson harfbuzz opus speex dav1d turbojpeg zimg SvtAv1Enc, \
-+        bluray jansson harfbuzz opus speex turbojpeg SvtAv1Enc, \
-         $(CONTRIB.build/)lib/lib$(n).a )
- 
- ifeq (1,$(FEATURE.fdk_aac))
-diff -up HandBrake-1.8.0/make/include/main.defs.orig HandBrake-1.8.0/make/include/main.defs
---- HandBrake-1.8.0/make/include/main.defs.orig	2024-05-19 16:06:45.000000000 +0200
-+++ HandBrake-1.8.0/make/include/main.defs	2024-06-09 10:50:34.026098608 +0200
-@@ -48,9 +48,7 @@ ifeq (1,$(FEATURE.x265))
-     MODULES += contrib/x265_12bit
- endif
- 
--MODULES += contrib/libdav1d
- MODULES += contrib/svt-av1
--MODULES += contrib/zimg
- MODULES += contrib/ffmpeg
- MODULES += contrib/libdvdread
- MODULES += contrib/libdvdnav
+ if get_option('libdovi').enabled()

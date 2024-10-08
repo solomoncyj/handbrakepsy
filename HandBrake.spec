@@ -12,7 +12,7 @@
 
 Name:           HandBrake
 Version:        1.8.2
-Release:        1%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Release:        2%{!?tag:.%{date}git%{shortcommit}}%{?dist}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
@@ -33,13 +33,16 @@ Patch1:         %{name}-no-libva.patch
 Patch2:         %{name}-no-fdk_aac.patch
 # Fix build on non-x86 (without nasm) and drop libtool requirement
 Patch3:         %{name}-no-libtool-nasm.patch
-# Fix linking with system libraries
-Patch4:         %{name}-syslibs-link.patch
 # Patches from Debian
-# https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0004-Do-not-use-contribs.patch
-Patch5:         %{name}-no-contribs.patch
+# https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0001-Remove-embedded-downloaded-copies-of-various-librari.patch
+Patch4:         %{name}-syslibs-link.patch
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0003-Remove-ambient-viewing-support.patch
-Patch6:         %{name}-remove-ambient-viewing-support.patch
+Patch5:         %{name}-remove-ambient-viewing-support.patch
+# https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0004-Do-not-use-contribs.patch
+Patch6:         %{name}-no-contribs.patch
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1032972#25
+# Fix https://github.com/HandBrake/HandBrake/issues/4029 with unpatched FFmpeg
+Patch7:         %{name}-save-pts-of-incomplete-subtitle.patch
 
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
@@ -47,7 +50,8 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  gnupg2
 %endif
 BuildRequires:  libappstream-glib
-BuildRequires:  ffmpeg-devel
+# Preview is broken with <7.0 https://github.com/HandBrake/HandBrake/issues/6178
+BuildRequires:  ffmpeg-devel >= 7.0
 # Should be >= 2.6:
 BuildRequires:  freetype-devel >= 2.4.11
 # Should be >= 0.19.7:
@@ -125,6 +129,7 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P4 -p1
 %patch -P5 -p1
 %patch -P6 -p1
+%patch -P7 -p1
 
 # Use system libraries in place of bundled ones
 for module in fdk-aac ffmpeg libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
@@ -191,6 +196,11 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{desktop_id}.
 %{_bindir}/HandBrakeCLI
 
 %changelog
+* Sun Sep 01 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.2-2
+- bump FFmpeg requirement to 7.0
+- sync patches from Debian
+- fix DVD subtitle PTS handling
+
 * Sun Aug 18 2024 Dominik 'Rathann' Mierzejewski <dominik@greysector.net> - 1.8.2-1
 - Update to 1.8.2
 
