@@ -13,7 +13,7 @@
 Name:           HandBrake-psy
 Version:        1.8.2
 Release:        %{autorelease}
-Summary:        An open-source multiplatform video transcoder
+Summary:        HandBrake with SVT-AV1-PSY patches
 License:        GPLv2+
 URL:            https://handbrake.fr/
 
@@ -139,6 +139,12 @@ gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %patch -P5 -p1
 %patch -P6 -p1
 %patch -P7 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
+%patch -P11 -p1
+%patch -P12 -p1
+%patch -P13 -p1
 
 # Use system libraries in place of bundled ones
 for module in fdk-aac ffmpeg libdvdnav libdvdread libbluray %{?_with_vpl:libvpl} nvdec nvenc svt-av1 x265; do
