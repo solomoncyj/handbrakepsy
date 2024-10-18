@@ -10,39 +10,46 @@
 
 %global desktop_id fr.handbrake.ghb
 
-Name:           HandBrake
+Name:           HandBrake-psy
 Version:        1.8.2
-Release:        3%{!?tag:.%{date}git%{shortcommit}}%{?dist}
+Release:        %{autorelease}
 Summary:        An open-source multiplatform video transcoder
 License:        GPLv2+
 URL:            https://handbrake.fr/
 
 %if 0%{?tag:1}
-Source0:        https://github.com/%{name}/%{name}/releases/download/%{version}/%{name}-%{version}-source.tar.bz2
-Source1:        https://github.com/%{name}/%{name}/releases/download/%{version}/%{name}-%{version}-source.tar.bz2.sig
+Source0:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/HandBrake-%{version}-source.tar.bz2
+Source1:        https://github.com/HandBrake/HandBrake/releases/download/%{version}/HandBrake-%{version}-source.tar.bz2.sig
 # import from https://handbrake.fr/openpgp.php or https://github.com/HandBrake/HandBrake/wiki/OpenPGP
 # gpg2 --export --export-options export-minimal 1629C061B3DDE7EB4AE34B81021DB8B44E4A8645 > gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 Source2:        gpg-keyring-1629C061B3DDE7EB4AE34B81021DB8B44E4A8645.gpg
 %else
-Source0:        https://github.com/%{name}/%{name}/archive/%{commit0}.tar.gz#/%{name}-%{shortcommit0}.tar.gz
+Source0:        https://github.com/HandBrake/HandBrake/archive/%{commit0}.tar.gz#/HandBrake-%{shortcommit0}.tar.gz
 %endif
 
 # Don't link with libva unnecessarily
-Patch1:         %{name}-no-libva.patch
+Patch1:         HandBrake-no-libva.patch
 # Don't link with fdk_aac unnecessarily
-Patch2:         %{name}-no-fdk_aac.patch
+Patch2:         HandBrake-no-fdk_aac.patch
 # Fix build on non-x86 (without nasm) and drop libtool requirement
-Patch3:         %{name}-no-libtool-nasm.patch
+Patch3:         HandBrake-no-libtool-nasm.patch
 # Patches from Debian
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0001-Remove-embedded-downloaded-copies-of-various-librari.patch
-Patch4:         %{name}-syslibs-link.patch
+Patch4:         HandBrake-syslibs-link.patch
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0003-Remove-ambient-viewing-support.patch
-Patch5:         %{name}-remove-ambient-viewing-support.patch
+Patch5:         HandBrake-remove-ambient-viewing-support.patch
 # https://salsa.debian.org/multimedia-team/handbrake/-/raw/master/debian/patches/0004-Do-not-use-contribs.patch
-Patch6:         %{name}-no-contribs.patch
+Patch6:         HandBrake-no-contribs.patch
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1032972#25
 # Fix https://github.com/HandBrake/HandBrake/issues/4029 with unpatched FFmpeg
-Patch7:         %{name}-save-pts-of-incomplete-subtitle.patch
+Patch7:         HandBrake-save-pts-of-incomplete-subtitle.patch
+# from https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/tree/main/patches
+Patch8:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0001-change-repo-url.patch
+Patch9:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0002-remove-neon-patch.patch
+Patch10:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0003-add-tunes.patch
+Patch11:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0004-extended-CRF.patch
+Patch12:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0005-add-presets.patch
+Patch13:          https://github.com/Nj0be/HandBrake-SVT-AV1-PSY/blob/main/patches/0006-change-name.patch
 
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
@@ -83,25 +90,27 @@ BuildRequires:  python3
 BuildRequires:  svt-av1-devel
 BuildRequires:  x264-devel >= 0.148
 BuildRequires:  x265-devel >= 1.9
+BuildRequires:  svt-av1-psy-devel
 
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
 %{?fedora:Recommends:     libdvdcss%{_isa}}
-Obsoletes:      HandBrake-cli < %{version}-%{release}
-Provides:       HandBrake-cli = %{version}-%{release}
-Provides:       handbrake =  %{version}-%{release}
+Provides:       HandBrake-psy-cli = %{version}-%{release}
+Provides:       handbrake-psy =  %{version}-%{release}
+Conflicts:       handbrake
+# they install into the same dir
 
 %description
-%{name} is a general-purpose, free, open-source, cross-platform, multithreaded
+HandBrake-psy is a general-purpose, free, open-source, cross-platform, multithreaded
 video transcoder software application. It can process most common multimedia
 files and any DVD or Bluray sources that do not contain any kind of copy
-protection.
+protection. Now SVT-AV1-PSY capabilites
 
 This package contains the command line version of the program.
 
 %package gui
 Summary:        An open-source multiplatform video transcoder (GUI)
-Provides:       handbrake-gui = %{version}-%{release}
+Provides:       handbrake-psy-gui = %{version}-%{release}
 Requires:       hicolor-icon-theme
 # needed for reading encrypted DVDs
 %{?fedora:Recommends:     libdvdcss%{_isa}}
@@ -109,7 +118,7 @@ Requires:       hicolor-icon-theme
 %{?fedora:Recommends:     gstreamer1-plugins-good%{_isa}}
 
 %description gui
-%{name} is a general-purpose, free, open-source, cross-platform, multithreaded
+HandBrake is a general-purpose, free, open-source, cross-platform, multithreaded
 video transcoder software application. It can process most common multimedia
 files and any DVD or Bluray sources that do not contain any kind of copy
 protection.
@@ -120,7 +129,7 @@ This package contains the main program with a graphical interface.
 %if 0%{?tag:1}
 gpgv2 --keyring %{S:2} %{S:1} %{S:0}
 %endif
-%setup -q %{!?tag:-n %{name}-%{commit0}}
+%setup -q %{!?tag:-n HandBrake-%{commit0}}
 %if 0%{!?_with_vpl}
 %patch -P1 -p1
 %endif
